@@ -1,0 +1,745 @@
+{
+	"compiler": {
+		"version": "0.8.19+commit.7dd6d404"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "R",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "T",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "UNISWAP_V3_FACTORY",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "UNISWAP_V3_NFT_POSITION_MANAGER",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "collectAllFees",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount0",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token0",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "token1",
+						"type": "address"
+					},
+					{
+						"internalType": "uint24",
+						"name": "fee",
+						"type": "uint24"
+					},
+					{
+						"internalType": "uint256",
+						"name": "initialPrice",
+						"type": "uint256"
+					}
+				],
+				"name": "createAndInitializePool",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "pool",
+						"type": "address"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token0",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "token1",
+						"type": "address"
+					},
+					{
+						"internalType": "uint24",
+						"name": "fee",
+						"type": "uint24"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount0ToAdd",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1ToAdd",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "initialPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint160",
+						"name": "minPrice",
+						"type": "uint160"
+					},
+					{
+						"internalType": "uint160",
+						"name": "maxPrice",
+						"type": "uint160"
+					}
+				],
+				"name": "createPoolAndMintNFT",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "pool",
+						"type": "address"
+					},
+					{
+						"internalType": "int24",
+						"name": "_tickLower",
+						"type": "int24"
+					},
+					{
+						"internalType": "int24",
+						"name": "_tickUpper",
+						"type": "int24"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint128",
+						"name": "liquidity",
+						"type": "uint128"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount0",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint128",
+						"name": "liquidity",
+						"type": "uint128"
+					}
+				],
+				"name": "decreaseLiquidityCurrentRange",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount0",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "token0",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "token1",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount0ToAdd",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1ToAdd",
+						"type": "uint256"
+					}
+				],
+				"name": "increaseLiquidityCurrentRange",
+				"outputs": [
+					{
+						"internalType": "uint128",
+						"name": "liquidity",
+						"type": "uint128"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount0",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint128",
+						"name": "liquidity",
+						"type": "uint128"
+					}
+				],
+				"name": "removePool",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount0",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fees0",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "fees1",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address payable",
+						"name": "recipient",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "sendEther",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_tokenIn",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenOut",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_amountOutMin",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint24",
+						"name": "_fee",
+						"type": "uint24"
+					}
+				],
+				"name": "swap",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "tokenA",
+						"type": "address"
+					},
+					{
+						"internalType": "contract IWETH",
+						"name": "tokenB",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount0ToAdd",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount1ToAdd",
+						"type": "uint256"
+					}
+				],
+				"name": "transferAndApprove",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "tokenContractAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "recipient",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "transferERC20",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "wtoken",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "unwrapWETH",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "wtoken",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "wrapETH",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/UniswapV3NFTPoolCreator.sol": "UniswapV3PoolCreator"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": [],
+		"viaIR": true
+	},
+	"sources": {
+		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0x9750c6b834f7b43000631af5cc30001c5f547b3ceb3635488f140f60e897ea6b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5a7d5b1ef5d8d5889ad2ed89d8619c09383b80b72ab226e0fe7bde1636481e34",
+				"dweb:/ipfs/QmebXWgtEfumQGBdVeM6c71McLixYXQP5Bk6kKXuoY4Bmr"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol": {
+			"keccak256": "0xf41ca991f30855bf80ffd11e9347856a517b977f0a6c2d52e6421a99b7840329",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b2717fd2bdac99daa960a6de500754ea1b932093c946388c381da48658234b95",
+				"dweb:/ipfs/QmP6QVMn6UeA3ByahyJbYQr5M6coHKBKsf3ySZSfbyA8R7"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
+			"keccak256": "0x9b72f93be69ca894d8492c244259615c4a742afc8d63720dbc8bb81087d9b238",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f5a7b96e511be78d5cdf635c784e6ab8cdd38625bb8cafb8a80914a1c89cf0f6",
+				"dweb:/ipfs/QmVzTCwJxQAkjRQHboT5QrvsVJGWQHgfEjeTbvyxoKBrds"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC721/IERC721.sol": {
+			"keccak256": "0xab28a56179c1db258c9bf5235b382698cb650debecb51b23d12be9e241374b68",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://daae589a9d6fa7e55f99f86c0a16796ca490f243fb3693632c3711c0646c1d56",
+				"dweb:/ipfs/QmR3zpd7wNw3rcUdekwiv6FYHJqksuTCXLVioTxu6Fbxk3"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol": {
+			"keccak256": "0xd1556954440b31c97a142c6ba07d5cade45f96fafd52091d33a14ebe365aecbf",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://26fef835622b46a5ba08b3ef6b46a22e94b5f285d0f0fb66b703bd30217d2c34",
+				"dweb:/ipfs/QmZ548qdwfL1qF7aXz3xh1GCdTiST81kGGuKRqVUfYmPZR"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
+			"keccak256": "0x75b829ff2f26c14355d1cba20e16fe7b29ca58eb5fef665ede48bc0f9c6c74b9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a0a107160525724f9e1bbbab031defc2f298296dd9e331f16a6f7130cec32146",
+				"dweb:/ipfs/QmemujxSd7gX8A9M8UwmNbz4Ms3U9FG9QfudUgxwvTmPWf"
+			]
+		},
+		"@openzeppelin/contracts/utils/Address.sol": {
+			"keccak256": "0xf96f969e24029d43d0df89e59d365f277021dac62b48e1c1e3ebe0acdd7f1ca1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ec772b45a624be516f1c81970caa8a2e144301e9d0921cbc1a2789fef39a1269",
+				"dweb:/ipfs/QmNyjwxCrGhQMyzLD93oUobJXVe9ceJvRvfXwbEtuxPiEj"
+			]
+		},
+		"@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f",
+				"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol": {
+			"keccak256": "0xcc3d0c93fc9ac0febbe09f941b465b57f750bcf3b48432da0b97dc289cfdc489",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://b9379ad954680c44a0bc523b314ae4c4da735f9fe1d02aa56ea5bdba6f1136f2",
+				"dweb:/ipfs/QmZXdgQNXKAckrXWz9R3mc47F1fvDvr28a2ewJrwNAw71B"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol": {
+			"keccak256": "0xfe6113d518466cd6652c85b111e01f33eb62157f49ae5ed7d5a3947a2044adb1",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://1c42b9e6f5902ac38dd43e25750939baa7e0c1425dc75afd717c4412731065d5",
+				"dweb:/ipfs/QmWaoacnzsucTvBME2o7YgZBZMhaHv7fkj83htHMVWJKWh"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol": {
+			"keccak256": "0x3f485fb1a44e8fbeadefb5da07d66edab3cfe809f0ac4074b1e54e3eb3c4cf69",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://095ce0626b41318c772b3ebf19d548282607f6a8f3d6c41c13edfbd5370c8652",
+				"dweb:/ipfs/QmVDZfJJ89UUCE1hMyzqpkZAtQ8jUsBgZNE5AMRG7RzRFS"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolActions.sol": {
+			"keccak256": "0x9453dd0e7442188667d01d9b65de3f1e14e9511ff3e303179a15f6fc267f7634",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://982f4328f956c3e60e67501e759eb292ac487f76460c774c50e9ae4fcc92aae5",
+				"dweb:/ipfs/QmRnzEDsaqtd9PJEVcgQi7p5aV5pMSvRUoGZJAdwFUJxgZ"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolDerivedState.sol": {
+			"keccak256": "0xe603ac5b17ecdee73ba2b27efdf386c257a19c14206e87eee77e2017b742d9e5",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://8febc9bdb399a4d94bb89f5377732652e2400e4a8dee808201ade6848f9004e7",
+				"dweb:/ipfs/QmaKDqYYFU4d2W2iN77aDHptfbFmYZRrMYXHeGpJmM8C1c"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolEvents.sol": {
+			"keccak256": "0x8071514d0fe5d17d6fbd31c191cdfb703031c24e0ece3621d88ab10e871375cd",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://d0b571930cc7488b1d546a7e9cea7c52d8b3c4e207da657ed0e0db7343b8cd03",
+				"dweb:/ipfs/QmaGK6vVwB95QSTR1XMYvrh7ivYAYZxi3fD7v6VMA4jZ39"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolImmutables.sol": {
+			"keccak256": "0xf6e5d2cd1139c4c276bdbc8e1d2b256e456c866a91f1b868da265c6d2685c3f7",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://b99c8c9ae8e27ee6559e5866bea82cbc9ffc8247f8d15b7422a4deb287d4d047",
+				"dweb:/ipfs/QmfL8gaqt3ffAnm6nVj5ksuNpLygXuL3xq5VBqrkwC2JJ3"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolOwnerActions.sol": {
+			"keccak256": "0x759b78a2918af9e99e246dc3af084f654e48ef32bb4e4cb8a966aa3dcaece235",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://64144fb96e1c7fdba87305acadb98a198d26a3d46c097cb3a666e567f6f29735",
+				"dweb:/ipfs/QmUnWVwN9FKB9uV5Pr8YfLpWZnYM2DENnRMaadZ492JS9u"
+			]
+		},
+		"@uniswap/v3-core/contracts/interfaces/pool/IUniswapV3PoolState.sol": {
+			"keccak256": "0x852dc1f5df7dcf7f11e7bb3eed79f0cea72ad4b25f6a9d2c35aafb48925fd49f",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://ed63907c38ff36b0e22bc9ffc53e791ea74f0d4f0e7c257fdfb5aaf8825b1f0f",
+				"dweb:/ipfs/QmSQrckghEjs6HVsA5GVgpNpZWvTXMY5eQLF7cN6deFeEg"
+			]
+		},
+		"@uniswap/v3-core/contracts/libraries/FixedPoint96.sol": {
+			"keccak256": "0x0ba8a9b95a956a4050749c0158e928398c447c91469682ca8a7cc7e77a7fe032",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://186d3b528866065a5856f96d2aeec698efa99f8da913e9adf34f8cc296cc993d",
+				"dweb:/ipfs/QmUAiMvtAQp8c9dy57bqJYzG7hkb1uChiPaQmt264skoqP"
+			]
+		},
+		"@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol": {
+			"keccak256": "0xa8f9d0061ee730a522dc4bae6bd5cabb3e997e2c5983da183e912bdca93dfa7b",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://496b68d4f72d58cc83cf51bd9cc9c99aaa46dc3c3df7c951a9e50ba29ee33016",
+				"dweb:/ipfs/Qmc3bkXwuRP8mDpcKgvLgbCKn8tD8PGCaBjnLHSPMJCRGD"
+			]
+		},
+		"@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol": {
+			"keccak256": "0x9bfaf1feb32814623e627ab70f2409760b15d95f1f9b058e2b3399a8bb732975",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://a8a2c3e55965b61bcd91993d8e1d5d34b8b8a63e0fdfce87a85f6af92526fd53",
+				"dweb:/ipfs/QmQj2CSCSwqDSU4KMNWxGsN2336Cy64WgpV1X1EHXNZWxM"
+			]
+		},
+		"contracts/IUniswapV3PoolCreator.sol": {
+			"keccak256": "0xce59d16ec07ebf4d56b41b77b815333a79a3a8ad33e5342466264e5838f35bfd",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://90b17d6aa580e365e1a5af4104e7f74921bc45b40974c0f60f4e98c074ac38ae",
+				"dweb:/ipfs/QmTRxJBRsTpi9T7HQxyZUpdtgpWrt4Gtua9WwRPUFqgnKt"
+			]
+		},
+		"contracts/IWETH.sol": {
+			"keccak256": "0xc3fa46c58422545b6dda04c19a6ca1cc9de2f7d79e6bfc7f9275c882342e7d59",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://ea254d1a2ccc2ad597e993764de7ab2835eeaee6c10b43880cade0f799bd3048",
+				"dweb:/ipfs/Qmf6N8nSaVB8jagaeFcHCWMgJyReiS3Lq5cDq2AVW1FYQa"
+			]
+		},
+		"contracts/UniswapV3NFTPoolCreator.sol": {
+			"keccak256": "0x2041b9a00b182bff3912adae9206d90f94315ccf2f11287dd61a53ca56d68456",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://54f3f4bc3c4b3ae8cf339c0a2b859619a8c68c7b70676a6f94b49187f5bae7d5",
+				"dweb:/ipfs/QmQHa7in8CSdWTvCnHQqMWsC14kDa43D9veUPqRPrnPCHq"
+			]
+		},
+		"contracts/UniswapV3PriceCalculator.sol": {
+			"keccak256": "0xd9a24a76c4903445a4e83ee4240de38e701ad4d18299e19298b2d35f49ba5fa3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e86bad3f508f617480cf476caeeac3235677aea5abe40f1a12e4322106ce69c4",
+				"dweb:/ipfs/QmUHKhZoBkbMqGGcUvNwKGkRCfbq4iEKRqdJwv6trCfrrV"
+			]
+		},
+		"https://github.com/Uniswap/v3-core/blob/0.8/contracts/libraries/TickMath.sol": {
+			"keccak256": "0x5c57de03a91cc2ec8939865dbbcb0197bb6c353b711075eefd8e0fca5e102129",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://1e994c24fd891ef8a3f5dbf5eba42b34feaf05e0376a29f91322faa18054449c",
+				"dweb:/ipfs/QmNdUJGUQxd1dPkMbnA5f5UNqakxRkQE5r7bTZJAuHeapS"
+			]
+		},
+		"https://github.com/Uniswap/v3-core/blob/main/contracts/interfaces/IERC20Minimal.sol": {
+			"keccak256": "0xbbb4fbd3cf2221bba3218d27871f61f2852ff296cbe81946b935481ff181f735",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://8ded0534518213ad286cbd3b7a120ec2070da0451f6d02e0bae6706b35f65fa3",
+				"dweb:/ipfs/QmcUVLd6GuJJ1Aw895kHprUQpwZwbo2SqPoSif3BciMfNF"
+			]
+		},
+		"https://github.com/Uniswap/v3-core/blob/main/contracts/libraries/TransferHelper.sol": {
+			"keccak256": "0x3f66e0d24a6bfb74a62a667c7229c65add3075375ef77d8eb2f929994bd4ab3e",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://e1f9dcb71c151c5cd17f7733139100a4a5befb4f1f05e9085e905d0a32276c17",
+				"dweb:/ipfs/QmNZBS1kh2y92bKufQbxxfpVRC1aAJDJD5B8qjmFyhuwMq"
+			]
+		},
+		"https://github.com/Uniswap/v3-periphery/blob/0.8/contracts/interfaces/IERC721Permit.sol": {
+			"keccak256": "0x9e3c2a4ee65ddf95b2dfcb0815784eea3a295707e6f8b83e4c4f0f8fe2e3a1d4",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://bfd939085b3618101b955f87c7fabf38338ba1aad480295acb8102ebc5d72471",
+				"dweb:/ipfs/QmauQD8bGDHTztmTDfaKXjzM7Wacrq2XU7VcTbwn1WrDBL"
+			]
+		},
+		"https://github.com/Uniswap/v3-periphery/blob/0.8/contracts/interfaces/INonfungiblePositionManager.sol": {
+			"keccak256": "0x3357b065654abb7f4a9ebd184a260bc39efde2afa4e99dca2e72ffc28e9c2984",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://f7682dab014724be8e0a5a401b047788ff9c70b77fa5bd567ea6adc333cb3b56",
+				"dweb:/ipfs/QmatH1Gc6z3AkP4dHjAEBKfCBbgBfD4vCceF4TuZU2bCyW"
+			]
+		},
+		"https://github.com/Uniswap/v3-periphery/blob/0.8/contracts/interfaces/IPeripheryImmutableState.sol": {
+			"keccak256": "0x7affcfeb5127c0925a71d6a65345e117c33537523aeca7bc98085ead8452519d",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://e16b291294210e71cb0f20cd0afe62ae2dc6878d627f5ccc19c4dc9cd80aec3f",
+				"dweb:/ipfs/QmQGitSyBr26nour81BZmpmDMyJpvZRqHQZvnCD1Acb127"
+			]
+		},
+		"https://github.com/Uniswap/v3-periphery/blob/0.8/contracts/interfaces/IPeripheryPayments.sol": {
+			"keccak256": "0xb547e10f1e69bed03621a62b73a503e260643066c6b4054867a4d1fef47eb274",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://f9a90f58f5fd5fb42f7811f4094113b532f307b14a73764c91f977590747f407",
+				"dweb:/ipfs/QmSeNH2mfiDMKf3Q6V2sqtNxx1s72JNuA1VVxRM9HoMqYp"
+			]
+		},
+		"https://github.com/Uniswap/v3-periphery/blob/0.8/contracts/interfaces/IPoolInitializer.sol": {
+			"keccak256": "0x9d7695e8d94c22cc5fcced602017aabb988de89981ea7bee29ea629d5328a862",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://61b50933026ee1017db2a6273af8cedc3238c95dca58880db0918dbdbb2f064f",
+				"dweb:/ipfs/QmUebR26pqG25d18aBELKz8aFFKkmHa8PxntzXTA7o9Ldu"
+			]
+		},
+		"https://github.com/Uniswap/v3-periphery/blob/0.8/contracts/libraries/PoolAddress.sol": {
+			"keccak256": "0xa72de315bd655a0fd5043ff97c7fd3868a1b5b1986afd75c6f5f8fd0f904985f",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://a8838e68aba9caf2b2cb13bd4cb661b1f9c167cca4dfcd50ac72ae96691392df",
+				"dweb:/ipfs/QmfLq3cmsSQTuLLxiF4bgceaf2jx8CoiVXQd7BZXGgJG1E"
+			]
+		}
+	},
+	"version": 1
+}
