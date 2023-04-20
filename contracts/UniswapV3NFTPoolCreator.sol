@@ -18,7 +18,7 @@ import "./interfaces/IMultiSig.sol";
 
 
 // IERC721Receiver ,
-contract UniswapV3PoolCreator is IUniswapV3PoolCreator , MultiSig  {
+contract UniswapV3PoolCreator is  MultiSig  {
     // Uniswap V3 Factory address
     address public constant UNISWAP_V3_FACTORY = 0x1F98431c8aD98523631AE4a59f267346ea31F984;
 
@@ -48,20 +48,20 @@ contract UniswapV3PoolCreator is IUniswapV3PoolCreator , MultiSig  {
     receive() external payable {}
 
     function executeFunction (uint256 _transactionId) internal override {
-                
-
 
     }
 
-   
+    //Swap Funcs :-
 
-    function swap(
-        address _tokenIn,
-        address _tokenOut,
-        uint256 _amountIn,
-        uint256 _amountOutMin,
-        uint24 _fee
-    ) external {
+    //************************** Start Swap **********************************
+
+
+    function swap(address _tokenIn,address _tokenOut,uint256 _amountIn,uint256 _amountOutMin,uint24 _fee) external onlyOwner returns (uint256 _transactionId) {
+        return submitTransaction(msg.sender, "_swap" , abi.encode(_tokenIn,_tokenOut,_amountIn,_amountOutMin,_fee));
+    }
+
+
+    function _swap(address _tokenIn,address _tokenOut,uint256 _amountIn,uint256 _amountOutMin,uint24 _fee) internal {
         //require(IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn), "Transfer failed");
         require(IERC20(_tokenIn).approve(UNISWAP_V3_ROUTER, _amountIn), "Approval failed");
  
@@ -80,8 +80,15 @@ contract UniswapV3PoolCreator is IUniswapV3PoolCreator , MultiSig  {
         swapRouter.exactInputSingle(params);
     }
 
+
+
+    function unwrapWETH(address wtoken ,uint256 amount) external onlyOwner returns (uint256 _transactionId) {
+        return submitTransaction(msg.sender, "_unwrapWETH" , abi.encode(wtoken, amount));
+    }
+
+
      // Unwraps WETH to ETH
-     function unwrapWETH(address wtoken ,uint256 amount) public {
+    function _unwrapWETH(address wtoken ,uint256 amount) internal {
         require(amount > 0, "Amount must be greater than 0");
 
         // Unwrap WETH to ETH
@@ -92,9 +99,15 @@ contract UniswapV3PoolCreator is IUniswapV3PoolCreator , MultiSig  {
         require(success, "Failed to transfer Ether");
     }
 
+
     
     // Function to wrap a specific amount of ETH held by the contract to WETH
-    function wrapETH(address wtoken, uint256 amount) external {
+    function wrapETH(address wtoken, uint256 amount) external onlyOwner returns (uint256 _transactionId) {
+        return submitTransaction(msg.sender, "_wrapETH" , abi.encode(wtoken, amount));
+
+    }
+
+    function _wrapETH(address wtoken, uint256 amount) internal {
         uint256 contractEthBalance = address(this).balance;
         require(contractEthBalance >= amount, "Insufficient ETH balance in the contract");
         require(amount > 0, "Amount must be greater than 0");
@@ -103,28 +116,32 @@ contract UniswapV3PoolCreator is IUniswapV3PoolCreator , MultiSig  {
         IWETH(wtoken).deposit{value: amount}();
     }
 
-   
+    //************************** END Swap **********************************
 
 
-    function transferAndApprove(
-        IERC20 tokenA,
-        IWETH tokenB,
-        uint amount0ToAdd,
-        uint amount1ToAdd
-    ) external  {
-        //IERC20 tokenA = IERC20(_tokenA);
-        //IWETH  tokenB = IWETH(_tokenB);
 
-        tokenA.transferFrom(msg.sender, address(this), amount0ToAdd);
-        tokenB.transferFrom(msg.sender, address(this), amount1ToAdd);
+    // function transferAndApprove(
+    //     IERC20 tokenA,
+    //     IWETH tokenB,
+    //     uint amount0ToAdd,
+    //     uint amount1ToAdd
+    // ) external  {
+    //     //IERC20 tokenA = IERC20(_tokenA);
+    //     //IWETH  tokenB = IWETH(_tokenB);
 
-        tokenA.approve(address(nftPositionManager), amount0ToAdd);
-        tokenB.approve(address(nftPositionManager), amount1ToAdd);
+    //     tokenA.transferFrom(msg.sender, address(this), amount0ToAdd);
+    //     tokenB.transferFrom(msg.sender, address(this), amount1ToAdd);
+
+    //     tokenA.approve(address(nftPositionManager), amount0ToAdd);
+    //     tokenB.approve(address(nftPositionManager), amount1ToAdd);
+    // }
+
+    function createPoolAndMintNFT(address token0,address token1,uint24 fee,uint256 amount0ToAdd,uint256 amount1ToAdd,uint256 initialPrice,uint160 minPrice,uint160 maxPrice)external payable onlyOwner returns (uint256 _transactionId) {
+        return submitTransaction(msg.sender, "_createPoolAndMintNFT" , abi.encode(token0,token1,fee,amount0ToAdd,amount1ToAdd,initialPrice,minPrice,maxPrice)) ;
+
     }
-
-  
    
-    function createPoolAndMintNFT(address token0,
+    function _createPoolAndMintNFT(address token0,
         address token1,
         uint24 fee,
         uint256 amount0ToAdd,
@@ -133,9 +150,9 @@ contract UniswapV3PoolCreator is IUniswapV3PoolCreator , MultiSig  {
         uint256 initialPrice,
         uint160 minPrice,
         uint160 maxPrice
-        ) external  payable returns (address pool ,int24 _tickLower ,int24 _tickUpper , uint tokenId, uint128 liquidity, uint amount0, uint amount1) {
+        ) internal returns (address pool ,int24 _tickLower ,int24 _tickUpper , uint tokenId, uint128 liquidity, uint amount0, uint amount1) {
 
-        pool = this.createAndInitializePool{value: msg.value}(token0, token1, fee, initialPrice);
+        pool = this.createAndInitializePool{value: 0}(token0, token1, fee, initialPrice);
 
         IERC20 tokenA = IERC20(token0);
         IWETH  tokenB = IWETH(token1);
