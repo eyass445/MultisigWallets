@@ -1,0 +1,68 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220a9428b6433960e9b56cfceb05c6974b5f8b788dea15b29456b47bd9904774e8964736f6c63430008130033",
+			"opcodes": "PUSH1 0x80 DUP1 PUSH1 0x40 MSTORE CALLVALUE PUSH1 0x17 JUMPI PUSH1 0x3A SWAP1 DUP2 PUSH1 0x1D DUP3 CODECOPY ADDRESS DUP2 POP POP RETURN JUMPDEST PUSH1 0x0 DUP1 REVERT INVALID PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 0xA9 TIMESTAMP DUP12 PUSH5 0x33960E9B56 0xCF 0xCE 0xB0 0x5C PUSH10 0x74B5F8B788DEA15B2945 PUSH12 0x47BD9904774E8964736F6C63 NUMBER STOP ADDMOD SGT STOP CALLER ",
+			"sourceMap": "4982:1998:1:-:0;;;;;;;;;;;;;;;;;;;;;"
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "600080fdfea2646970667358221220a9428b6433960e9b56cfceb05c6974b5f8b788dea15b29456b47bd9904774e8964736f6c63430008130033",
+			"opcodes": "PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 0xA9 TIMESTAMP DUP12 PUSH5 0x33960E9B56 0xCF 0xCE 0xB0 0x5C PUSH10 0x74B5F8B788DEA15B2945 PUSH12 0x47BD9904774E8964736F6C63 NUMBER STOP ADDMOD SGT STOP CALLER ",
+			"sourceMap": "4982:1998:1:-:0;;"
+		},
+		"gasEstimates": {
+			"creation": {
+				"codeDepositCost": "11600",
+				"executionCost": "infinite",
+				"totalCost": "infinite"
+			},
+			"internal": {
+				"calculateSqrtPriceX96(uint256)": "infinite",
+				"calculateTicksFromPriceRange(uint160,uint160)": "infinite",
+				"getSqrtPriceAtTick(int24)": "infinite",
+				"getTickAtSqrtRatio(uint160)": "infinite",
+				"sqrt(uint256)": "infinite",
+				"sqrtPriceX96ToUint(uint160,uint8)": "infinite"
+			}
+		},
+		"methodIdentifiers": {}
+	},
+	"abi": []
+}

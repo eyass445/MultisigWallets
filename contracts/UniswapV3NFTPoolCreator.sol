@@ -10,9 +10,9 @@ import "https://github.com/Uniswap/v3-periphery/blob/0.8/contracts/interfaces/IN
 import "@uniswap/v3-periphery/contracts/interfaces/IMulticall.sol";
 import "https://github.com/Uniswap/v3-core/blob/main/contracts/libraries/TransferHelper.sol";
 import "@uniswap/v3-core/contracts/libraries/FixedPoint96.sol";
-import "./UniswapV3PriceCalculator.sol";
-import "./IWETH.sol";
-import "./IUniswapV3PoolCreator.sol";
+import "./lib/UniswapV3PriceCalculator.sol";
+import "./interfaces/IWETH.sol";
+import "./interfaces/IUniswapV3PoolCreator.sol";
 
 
 // IERC721Receiver ,
