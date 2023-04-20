@@ -13,10 +13,12 @@ import "@uniswap/v3-core/contracts/libraries/FixedPoint96.sol";
 import "./lib/UniswapV3PriceCalculator.sol";
 import "./interfaces/IWETH.sol";
 import "./interfaces/IUniswapV3PoolCreator.sol";
+import "./MultiSig.sol";
+import "./interfaces/IMultiSig.sol";
 
 
 // IERC721Receiver ,
-contract UniswapV3PoolCreator is IUniswapV3PoolCreator  {
+contract UniswapV3PoolCreator is IUniswapV3PoolCreator , MultiSig  {
     // Uniswap V3 Factory address
     address public constant UNISWAP_V3_FACTORY = 0x1F98431c8aD98523631AE4a59f267346ea31F984;
 
@@ -37,13 +39,19 @@ contract UniswapV3PoolCreator is IUniswapV3PoolCreator  {
     ISwapRouter private swapRouter;
 
 
-    constructor() {
+    constructor(address[] memory _owners, uint256 _numConfirmationsRequired) MultiSig (_owners, _numConfirmationsRequired) {
         v3Factory = IUniswapV3Factory(UNISWAP_V3_FACTORY);
         nftPositionManager = INonfungiblePositionManager(UNISWAP_V3_NFT_POSITION_MANAGER);
         swapRouter = ISwapRouter(UNISWAP_V3_ROUTER);
 
     }
     receive() external payable {}
+
+    function executeFunction (uint256 _transactionId) internal override {
+                
+
+
+    }
 
    
 
