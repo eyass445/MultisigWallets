@@ -1,0 +1,318 @@
+{
+	"id": "959926fc37ce3978d6f4529167f30c13",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.19",
+	"solcLongVersion": "0.8.19+commit.7dd6d404",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"contracts/interfaces/IMultiSig.sol": {
+				"content": "// SPDX-License-Identifier: GPL-3.0\npragma solidity >=0.8.14;\n\ninterface IMultiSig {\n\n    struct Transaction {\n        address from;\n        address executed;\n        uint256 numConfirmations;\n        string functionName;\n        bytes data;\n        address[] confirmed;\n        uint256 createdAt;\n        uint256 updatedAt;\n    }\n\n    event SubmitTransaction(address indexed from, uint256 indexed transactionId); \n    event ConfirmTransaction(address indexed from, uint256 indexed transactionId);\n    event ExecuteTransaction(address indexed from, uint256 indexed transactionId);\n\n    function getOwners() external view returns (address[] memory);\n\n    function confirmTransaction(uint256 _transactionId) external;\n    \n    function executeTransaction(uint256 _transactionId) external;\n\n    function getTransaction (uint256 _transactionId) external view returns (Transaction memory transactions_);\n\n    function getAllTransactions (uint256 _pageNo, uint256 _perPage) external view returns (Transaction [] memory transactions_, uint256 totalList_);\n\n}"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": true,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"*": [
+						"*"
+					]
+				}
+			},
+			"viaIR": true
+		}
+	},
+	"output": {
+		"contracts": {
+			"contracts/interfaces/IMultiSig.sol": {
+				"IMultiSig": {
+					"abi": [
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "ConfirmTransaction",
+							"type": "event"
+						},
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "ExecuteTransaction",
+							"type": "event"
+						},
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "SubmitTransaction",
+							"type": "event"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "confirmTransaction",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "executeTransaction",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_pageNo",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "_perPage",
+									"type": "uint256"
+								}
+							],
+							"name": "getAllTransactions",
+							"outputs": [
+								{
+									"components": [
+										{
+											"internalType": "address",
+											"name": "from",
+											"type": "address"
+										},
+										{
+											"internalType": "address",
+											"name": "executed",
+											"type": "address"
+										},
+										{
+											"internalType": "uint256",
+											"name": "numConfirmations",
+											"type": "uint256"
+										},
+										{
+											"internalType": "string",
+											"name": "functionName",
+											"type": "string"
+										},
+										{
+											"internalType": "bytes",
+											"name": "data",
+											"type": "bytes"
+										},
+										{
+											"internalType": "address[]",
+											"name": "confirmed",
+											"type": "address[]"
+										},
+										{
+											"internalType": "uint256",
+											"name": "createdAt",
+											"type": "uint256"
+										},
+										{
+											"internalType": "uint256",
+											"name": "updatedAt",
+											"type": "uint256"
+										}
+									],
+									"internalType": "struct IMultiSig.Transaction[]",
+									"name": "transactions_",
+									"type": "tuple[]"
+								},
+								{
+									"internalType": "uint256",
+									"name": "totalList_",
+									"type": "uint256"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "getOwners",
+							"outputs": [
+								{
+									"internalType": "address[]",
+									"name": "",
+									"type": "address[]"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "getTransaction",
+							"outputs": [
+								{
+									"components": [
+										{
+											"internalType": "address",
+											"name": "from",
+											"type": "address"
+										},
+										{
+											"internalType": "address",
+											"name": "executed",
+											"type": "address"
+										},
+										{
+											"internalType": "uint256",
+											"name": "numConfirmations",
+											"type": "uint256"
+										},
+										{
+											"internalType": "string",
+											"name": "functionName",
+											"type": "string"
+										},
+										{
+											"internalType": "bytes",
+											"name": "data",
+											"type": "bytes"
+										},
+										{
+											"internalType": "address[]",
+											"name": "confirmed",
+											"type": "address[]"
+										},
+										{
+											"internalType": "uint256",
+											"name": "createdAt",
+											"type": "uint256"
+										},
+										{
+											"internalType": "uint256",
+											"name": "updatedAt",
+											"type": "uint256"
+										}
+									],
+									"internalType": "struct IMultiSig.Transaction",
+									"name": "transactions_",
+									"type": "tuple"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						}
+					],
+					"devdoc": {
+						"kind": "dev",
+						"methods": {},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "",
+						"bytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"deployedBytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"gasEstimates": null,
+						"legacyAssembly": null,
+						"methodIdentifiers": {
+							"confirmTransaction(uint256)": "c01a8c84",
+							"executeTransaction(uint256)": "ee22610b",
+							"getAllTransactions(uint256,uint256)": "c5e57c64",
+							"getOwners()": "a0e67e2b",
+							"getTransaction(uint256)": "33ea3dc8"
+						}
+					},
+					"ewasm": {
+						"wasm": ""
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"ConfirmTransaction\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"ExecuteTransaction\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"SubmitTransaction\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"confirmTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"executeTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_pageNo\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_perPage\",\"type\":\"uint256\"}],\"name\":\"getAllTransactions\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"executed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numConfirmations\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"functionName\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"address[]\",\"name\":\"confirmed\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"}],\"internalType\":\"struct IMultiSig.Transaction[]\",\"name\":\"transactions_\",\"type\":\"tuple[]\"},{\"internalType\":\"uint256\",\"name\":\"totalList_\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOwners\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"getTransaction\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"executed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numConfirmations\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"functionName\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"address[]\",\"name\":\"confirmed\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"}],\"internalType\":\"struct IMultiSig.Transaction\",\"name\":\"transactions_\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IMultiSig.sol\":\"IMultiSig\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IMultiSig.sol\":{\"keccak256\":\"0xf49ad3879fabfc53a39c59ee05a257eec49d2aa97ac473e8b1eae0a54412652f\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://5d6954d7c6a809659649ffc45b0951580b4b5c2d0ee99a4ae2fbb6c2f072f94f\",\"dweb:/ipfs/QmNRVf3tzS1XfToWAGJUqya3owZZZ1digDSC4H31tWyhTZ\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [],
+						"types": null
+					},
+					"userdoc": {
+						"kind": "user",
+						"methods": {},
+						"version": 1
+					}
+				}
+			}
+		},
+		"sources": {
+			"contracts/interfaces/IMultiSig.sol": {
+				"id": 0
+			}
+		}
+	}
+}
