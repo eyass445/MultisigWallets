@@ -22,7 +22,7 @@ interface IMultiSig {
 
     function confirmTransaction(uint256 _transactionId) external;
     
-    function executeTransaction(uint256 _transactionId) external;
+    function executeTransaction(uint256 _transactionId) external payable ;
 
     function getTransaction (uint256 _transactionId) external view returns (Transaction memory transactions_);
 

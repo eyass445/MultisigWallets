@@ -85,7 +85,7 @@
 				],
 				"name": "executeTransaction",
 				"outputs": [],
-				"stateMutability": "nonpayable",
+				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
@@ -263,11 +263,11 @@
 	},
 	"sources": {
 		"contracts/interfaces/IMultiSig.sol": {
-			"keccak256": "0xf49ad3879fabfc53a39c59ee05a257eec49d2aa97ac473e8b1eae0a54412652f",
+			"keccak256": "0xbde0e8dc95210b224221ba13106bfee3e53c5a19cc60283445bb072363761daa",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://5d6954d7c6a809659649ffc45b0951580b4b5c2d0ee99a4ae2fbb6c2f072f94f",
-				"dweb:/ipfs/QmNRVf3tzS1XfToWAGJUqya3owZZZ1digDSC4H31tWyhTZ"
+				"bzz-raw://3e19fc7ea2ca18c9e3e317911f22b0c904ffe012333db291c40a3b2b94d7edc9",
+				"dweb:/ipfs/QmadMaHoK18AdtwmqWCL4quF5PUoWLcRdWXFQcJhYBRQGq"
 			]
 		}
 	},
