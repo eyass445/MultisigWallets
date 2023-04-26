@@ -278,7 +278,7 @@
 				],
 				"name": "executeTransaction",
 				"outputs": [],
-				"stateMutability": "nonpayable",
+				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
@@ -836,27 +836,27 @@
 			]
 		},
 		"contracts/MultiSig.sol": {
-			"keccak256": "0x35dacf7d77dfb3fbd0fee0e9bafb220f4794beb674c40ea1576f0be46827d644",
+			"keccak256": "0x1a72d3d408fe2bc0b4a67ea9dc1aaacb4172a1227efe1a6e8ddeca6ee4a7ec42",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://366081d4d17403f967e5e8819498738bc06bf63bd8c99d30e3a448787d954b08",
-				"dweb:/ipfs/QmYwQXu2Q4VgrVWKUu662gdEBohiLgQnNbvkbUs2xfquX8"
+				"bzz-raw://c77198c8e5a0b6a75016c876ea9cfa6c2c3d098296fdfb2af9143177ddca0bde",
+				"dweb:/ipfs/QmY3XKa5WyfKti2X5JV5mzMMvnUy3SjGEMP4Ci32ti3QDY"
 			]
 		},
 		"contracts/UniswapV3NFTPoolCreator.sol": {
-			"keccak256": "0x2bec0d20e0d3e2abea29d4294fdad32bac0dd65ad4cb3e18a06fc7ec6215d132",
+			"keccak256": "0x4d7122dbbd4817ac891aa8128dbd7a67cd4ee9a9d4ce1a5531d2345c8044441e",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://e9603aaef8343b3e1befaae5944ed6f5aaa724353d691e0adb7626eef83b999c",
-				"dweb:/ipfs/QmVyTvgYufth2RrqY5SmFqojtxPUZ7LVvotuGERmxmkqhQ"
+				"bzz-raw://67dd2476af24792e9cb68befbe47141442715a09f0a705f9c0e69440dd7d3c33",
+				"dweb:/ipfs/QmTdSqY3rBP39H8vU9WQsE3JwYLLJMpM4jPBYK2Ef44LnL"
 			]
 		},
 		"contracts/interfaces/IMultiSig.sol": {
-			"keccak256": "0xf49ad3879fabfc53a39c59ee05a257eec49d2aa97ac473e8b1eae0a54412652f",
+			"keccak256": "0xbde0e8dc95210b224221ba13106bfee3e53c5a19cc60283445bb072363761daa",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://5d6954d7c6a809659649ffc45b0951580b4b5c2d0ee99a4ae2fbb6c2f072f94f",
-				"dweb:/ipfs/QmNRVf3tzS1XfToWAGJUqya3owZZZ1digDSC4H31tWyhTZ"
+				"bzz-raw://3e19fc7ea2ca18c9e3e317911f22b0c904ffe012333db291c40a3b2b94d7edc9",
+				"dweb:/ipfs/QmadMaHoK18AdtwmqWCL4quF5PUoWLcRdWXFQcJhYBRQGq"
 			]
 		},
 		"contracts/interfaces/IUniswapV3PoolCreator.sol": {

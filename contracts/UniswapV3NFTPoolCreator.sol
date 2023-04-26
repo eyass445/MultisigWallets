@@ -59,10 +59,9 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
             (address wtoken ,uint256 amount) = abi.decode(transactionMap[_transactionId].data, (address ,uint256 ));
             _wrapETH(wtoken , amount);
         } else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_createPoolAndMintNFT"))))) {
-            (address token0,address token1,uint24 fee,uint256 amount0ToAdd,uint256 amount1ToAdd,uint256 initialPrice,uint160 minPrice,uint160 maxPrice) = abi.decode(transactionMap[_transactionId].data, (address ,address ,uint24 ,uint256 ,uint256 ,uint256 ,uint160 ,uint160 ));
-            outputData  = _createPoolAndMintNFT( token0, token1, fee, amount0ToAdd, amount1ToAdd, initialPrice, minPrice, maxPrice);
+            (address token0,address token1,uint24 fee,uint256 amount0ToAdd,uint256 amount1ToAdd,uint256 initialPrice,uint160 minPrice,uint160 maxPrice , uint256 etherAmount) = abi.decode(transactionMap[_transactionId].data, (address ,address ,uint24 ,uint256 ,uint256 ,uint256 ,uint160 ,uint160 , uint256 ));
+            outputData  = _createPoolAndMintNFT( token0, token1, fee, amount0ToAdd, amount1ToAdd, initialPrice, minPrice, maxPrice , etherAmount );
             // (address pool, int24 _tickLower, int24 _tickUpper, uint tokenId, uint128 liquidity, uint amount0, uint amount1) = abi.decode(outputData, (address, int24, int24, uint, uint128, uint, uint));
-
         }
     }
 
@@ -133,26 +132,11 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
 
     //************************** END Swap **********************************
 
+    //************************** START POOL **********************************
 
-
-    // function transferAndApprove(
-    //     IERC20 tokenA,
-    //     IWETH tokenB,
-    //     uint amount0ToAdd,
-    //     uint amount1ToAdd
-    // ) external  {
-    //     //IERC20 tokenA = IERC20(_tokenA);
-    //     //IWETH  tokenB = IWETH(_tokenB);
-
-    //     tokenA.transferFrom(msg.sender, address(this), amount0ToAdd);
-    //     tokenB.transferFrom(msg.sender, address(this), amount1ToAdd);
-
-    //     tokenA.approve(address(nftPositionManager), amount0ToAdd);
-    //     tokenB.approve(address(nftPositionManager), amount1ToAdd);
-    // }
 
     function createPoolAndMintNFT(address token0,address token1,uint24 fee,uint256 amount0ToAdd,uint256 amount1ToAdd,uint256 initialPrice,uint160 minPrice,uint160 maxPrice)external payable onlyOwner returns (uint256 _transactionId) {
-        return submitTransaction(msg.sender, "_createPoolAndMintNFT" , abi.encode(token0,token1,fee,amount0ToAdd,amount1ToAdd,initialPrice,minPrice,maxPrice)) ;
+        return submitTransaction(msg.sender, "_createPoolAndMintNFT" , abi.encode(token0,token1,fee,amount0ToAdd,amount1ToAdd,initialPrice,minPrice,maxPrice , msg.value)) ;
 
     }
    
@@ -163,10 +147,18 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         uint256 amount1ToAdd,
         uint256 initialPrice,
         uint160 minPrice,
-        uint160 maxPrice
+        uint160 maxPrice,
+        uint256 etherAmount
         ) internal returns (bytes memory) {
 
-        address pool = this.createAndInitializePool{value: msg.value}(token0, token1, fee, initialPrice);
+        //address pool = this.createAndInitializePool{value: etherAmount}(token0, token1, fee, initialPrice);
+        uint160 sqrtPriceX96 = UniswapV3PriceCalculator.calculateSqrtPriceX96(initialPrice);
+        address pool = nftPositionManager.createAndInitializePoolIfNecessary{value: etherAmount}(
+            token0,
+            token1,
+            fee,
+            sqrtPriceX96
+        );
 
         IERC20 tokenA = IERC20(token0);
         IWETH  tokenB = IWETH(token1);
@@ -212,68 +204,7 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         return outputData;
     }
 
-    // function _createPoolAndMintNFT(address token0,
-    //     address token1,
-    //     uint24 fee,
-    //     uint256 amount0ToAdd,
-    //     uint256 amount1ToAdd,
-    //     //address recipient,
-    //     uint256 initialPrice,
-    //     uint160 minPrice,
-    //     uint160 maxPrice
-    //     ) internal returns (address pool ,int24 _tickLower ,int24 _tickUpper , uint tokenId, uint128 liquidity, uint amount0, uint amount1) {
-
-    //     pool = this.createAndInitializePool{value: 0}(token0, token1, fee, initialPrice);
-
-    //     IERC20 tokenA = IERC20(token0);
-    //     IWETH  tokenB = IWETH(token1);
-
-
-    //     tokenA.transferFrom(msg.sender, address(this), amount0ToAdd);
-    //     tokenB.transferFrom(msg.sender, address(this), amount1ToAdd);
-
-    //     tokenA.approve(address(nftPositionManager), amount0ToAdd);
-    //     tokenB.approve(address(nftPositionManager), amount1ToAdd);
-
-
-    //     ( _tickLower , _tickUpper ) = UniswapV3PriceCalculator.calculateTicksFromPriceRange(minPrice , maxPrice);
-
-
-    //     INonfungiblePositionManager.MintParams memory mintParams = INonfungiblePositionManager.MintParams({
-    //         token0: token0,
-    //         token1: token1,
-    //         fee: fee,
-    //         tickLower: _tickLower,
-    //         tickUpper: _tickUpper,
-    //         amount0Desired: amount0ToAdd,
-    //         amount1Desired: amount1ToAdd,
-    //         amount0Min: 0,
-    //         amount1Min: 0,
-    //         recipient: address(this),
-    //         deadline: block.timestamp
-    //     });
-
-
-    //     (tokenId, liquidity, amount0, amount1) = nftPositionManager.mint(
-    //         mintParams
-    //     );
-
-    //     if (amount0 < amount0ToAdd) {
-    //         tokenA.approve(address(nftPositionManager), 0);
-    //         uint refund0 = amount0ToAdd - amount0;
-    //         tokenA.transfer(msg.sender, refund0);
-    //     }
-    //     if (amount1 < amount1ToAdd) {
-    //         tokenB.approve(address(nftPositionManager), 0);
-    //         uint refund1 = amount1ToAdd - amount1;
-    //         tokenB.transfer(msg.sender, refund1);
-    //     }
-    // }
-
-
-
-
-    
+    /////////////////////////////////////////////////////
     function createAndInitializePool(
         address token0,
         address token1,
@@ -293,11 +224,18 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         return newPool;
         // Perform additional operations with the created or initialized pool if necessary
     }
-
+    /////////////////////////////////////////////////////
 
     function collectAllFees(
         uint tokenId
-    ) external returns (uint amount0, uint amount1) {
+    ) external onlyOwner returns (uint256 _transactionId) {
+        return submitTransaction(msg.sender, "_collectAllFees" , abi.encode(tokenId)) ;
+
+    }
+    //(uint amount0, uint amount1)
+    function _collectAllFees(
+        uint tokenId
+    ) internal returns (bytes memory) {
         INonfungiblePositionManager.CollectParams
             memory params = INonfungiblePositionManager.CollectParams({
                 tokenId: tokenId,
@@ -306,8 +244,16 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
                 amount1Max: type(uint128).max
             });
 
-        (amount0, amount1) = nftPositionManager.collect(params);
+        (uint amount0, uint amount1) = nftPositionManager.collect(params);
+
+        bytes memory outputData = abi.encode(amount0, amount1);
+
+        return outputData;
+
+
     }
+
+
 
     function increaseLiquidityCurrentRange(
         address token0,
@@ -315,7 +261,18 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         uint tokenId,
         uint amount0ToAdd,
         uint amount1ToAdd
-    ) external returns (uint128 liquidity, uint amount0, uint amount1) {
+    ) external onlyOwner returns (uint256 _transactionId)  {
+        return submitTransaction(msg.sender, "_increaseLiquidityCurrentRange" , abi.encode(token0,token1,tokenId,amount0ToAdd,amount1ToAdd)) ;
+    }
+
+    //(uint128 liquidity, uint amount0, uint amount1)
+    function _increaseLiquidityCurrentRange(
+        address token0,
+        address token1,
+        uint tokenId,
+        uint amount0ToAdd,
+        uint amount1ToAdd
+    ) internal returns (bytes memory)  {
 
         IERC20 tokenA = IERC20(token0);
         IWETH  tokenB = IWETH(token1);
@@ -335,15 +292,20 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
                 deadline: block.timestamp
             });
 
-        (liquidity, amount0, amount1) = nftPositionManager.increaseLiquidity(
-            params
-        );
+        (uint128 liquidity, uint amount0,uint amount1) = nftPositionManager.increaseLiquidity(params);
+
+        bytes memory outputData = abi.encode(liquidity, amount0, amount1);
+
+        return outputData;
     }
 
-    function decreaseLiquidityCurrentRange(
-        uint tokenId,
-        uint128 liquidity
-    ) external returns (uint amount0, uint amount1) {
+    function decreaseLiquidityCurrentRange(uint tokenId,uint128 liquidity) external onlyOwner returns (uint256 _transactionId)  {
+        return submitTransaction(msg.sender, "_decreaseLiquidityCurrentRange" , abi.encode(tokenId,liquidity)) ;
+
+    }
+
+    //returns (uint amount0, uint amount1)
+    function _decreaseLiquidityCurrentRange(uint tokenId,uint128 liquidity) internal returns (bytes memory)  {
         INonfungiblePositionManager.DecreaseLiquidityParams
             memory params = INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: tokenId,
@@ -353,10 +315,19 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
                 deadline: block.timestamp
             });
 
-        (amount0, amount1) = nftPositionManager.decreaseLiquidity(params);
+        (uint amount0, uint amount1) = nftPositionManager.decreaseLiquidity(params);
+
+        bytes memory outputData = abi.encode(amount0, amount1);
+
+        return outputData;
     }
 
-    function removePool(uint tokenId, uint128 liquidity) external returns (uint amount0, uint amount1, uint fees0, uint fees1) {
+    function removePool(uint tokenId, uint128 liquidity) external onlyOwner returns (uint256 _transactionId)  {
+        return submitTransaction(msg.sender, "_removePool" , abi.encode(tokenId,liquidity)) ;
+    }
+
+    //(uint amount0, uint amount1, uint fees0, uint fees1) 
+    function _removePool(uint tokenId, uint128 liquidity) internal returns (bytes memory){
         // Decrease liquidity
         INonfungiblePositionManager.DecreaseLiquidityParams
             memory decreaseLiquidityParams = INonfungiblePositionManager.DecreaseLiquidityParams({
@@ -367,7 +338,7 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
                 deadline: block.timestamp
             });
 
-        (amount0, amount1) = nftPositionManager.decreaseLiquidity(decreaseLiquidityParams);
+        (uint amount0, uint amount1) = nftPositionManager.decreaseLiquidity(decreaseLiquidityParams);
 
         // Collect fees
         INonfungiblePositionManager.CollectParams
@@ -378,14 +349,26 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
                 amount1Max: type(uint128).max
             });
 
-        (fees0, fees1) = nftPositionManager.collect(collectParams);
+        (uint fees0, uint fees1) = nftPositionManager.collect(collectParams);
+
+        bytes memory outputData = abi.encode(amount0, amount1, fees0, fees1);
+
+        return outputData;
     }
 
-    function transferERC20(
-        address tokenContractAddress,
-        address recipient,
-        uint256 amount
-    ) external {
+    //************************** END POOL **********************************
+
+
+
+    //************************** START COIN **********************************
+
+
+    function transferERC20(address tokenContractAddress,address recipient,uint256 amount) external onlyOwner returns (uint256 _transactionId) {
+        return submitTransaction(msg.sender, "_transferERC20" , abi.encode(tokenContractAddress,recipient ,amount)) ;
+
+    }
+
+    function _transferERC20(address tokenContractAddress,address recipient,uint256 amount) internal {
         IERC20 token = IERC20(tokenContractAddress);
         require(token.balanceOf(address(this)) >= amount, "Insufficient balance");
 
@@ -394,13 +377,22 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         token.transfer(recipient, amount);
     }
 
+    function sendEther(address payable recipient, uint256 amount) external onlyOwner returns (uint256 _transactionId) {
+        return submitTransaction(msg.sender, "_sendEther" , abi.encode(recipient ,amount)) ;
+
+    }
+
     // Function to send Ether from the contract to a recipient
-    function sendEther(address payable recipient, uint256 amount) external {
+    function _sendEther(address payable recipient, uint256 amount) internal {
         require(address(this).balance >= amount, "Insufficient balance in the contract");
 
         // Transfer Ether to the recipient
         recipient.transfer(amount);
     }
+
+
+    //************************** END COIN **********************************
+
 
 
 

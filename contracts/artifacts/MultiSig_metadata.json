@@ -85,7 +85,7 @@
 				],
 				"name": "executeTransaction",
 				"outputs": [],
-				"stateMutability": "payable",
+				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -263,19 +263,19 @@
 	},
 	"sources": {
 		"contracts/MultiSig.sol": {
-			"keccak256": "0x1a72d3d408fe2bc0b4a67ea9dc1aaacb4172a1227efe1a6e8ddeca6ee4a7ec42",
+			"keccak256": "0x88e7a90c3382f1f68db011c2e22d5c45441ea208c1271ebd744928f9896bce7a",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://c77198c8e5a0b6a75016c876ea9cfa6c2c3d098296fdfb2af9143177ddca0bde",
-				"dweb:/ipfs/QmY3XKa5WyfKti2X5JV5mzMMvnUy3SjGEMP4Ci32ti3QDY"
+				"bzz-raw://2d844de9fa4e7a16026f3d489629dcd41ffd7b0eafdcbf781c5b7e099234bf75",
+				"dweb:/ipfs/QmQhba4hCTD5748MUoHPFB7Xo2iozvZFGJHjDAf4ds6NBF"
 			]
 		},
 		"contracts/interfaces/IMultiSig.sol": {
-			"keccak256": "0xbde0e8dc95210b224221ba13106bfee3e53c5a19cc60283445bb072363761daa",
+			"keccak256": "0x79e07a72c6eb17c912eda498187103b64b731fd355abcc07134a160922a70313",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://3e19fc7ea2ca18c9e3e317911f22b0c904ffe012333db291c40a3b2b94d7edc9",
-				"dweb:/ipfs/QmadMaHoK18AdtwmqWCL4quF5PUoWLcRdWXFQcJhYBRQGq"
+				"bzz-raw://df9154882f17e4d302f968a84de216ed81226308d9ab321ccf07fddb2cf9775d",
+				"dweb:/ipfs/QmSvF1exGVCdqJ5FtiMQjA4KCn3a5exQQYzioWgFbhNd1u"
 			]
 		},
 		"contracts/lib/SafeMath.sol": {

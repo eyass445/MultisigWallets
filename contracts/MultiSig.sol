@@ -104,7 +104,7 @@ abstract contract MultiSig is IMultiSig {
         emit ConfirmTransaction(msg.sender, _transactionId);
     }
 
-    function executeTransaction(uint256 _transactionId) external payable onlyOwner transactionExists(_transactionId) 
+    function executeTransaction(uint256 _transactionId) external  onlyOwner transactionExists(_transactionId) 
         notExecuted(_transactionId) {
 
         require(transactionMap[_transactionId].numConfirmations >= numConfirmationsRequired, "cannot execute tx");
