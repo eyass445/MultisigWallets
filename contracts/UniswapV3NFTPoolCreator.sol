@@ -61,7 +61,24 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         } else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_createPoolAndMintNFT"))))) {
             (address token0,address token1,uint24 fee,uint256 amount0ToAdd,uint256 amount1ToAdd,uint256 initialPrice,uint160 minPrice,uint160 maxPrice , uint256 etherAmount) = abi.decode(transactionMap[_transactionId].data, (address ,address ,uint24 ,uint256 ,uint256 ,uint256 ,uint160 ,uint160 , uint256 ));
             outputData  = _createPoolAndMintNFT( token0, token1, fee, amount0ToAdd, amount1ToAdd, initialPrice, minPrice, maxPrice , etherAmount );
-            // (address pool, int24 _tickLower, int24 _tickUpper, uint tokenId, uint128 liquidity, uint amount0, uint amount1) = abi.decode(outputData, (address, int24, int24, uint, uint128, uint, uint));
+        }else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_collectAllFees"))))) {
+            (uint tokenId) = abi.decode(transactionMap[_transactionId].data, (uint));
+            outputData  = _collectAllFees(tokenId);
+        }else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_increaseLiquidityCurrentRange"))))) {
+            (address token0,address token1,uint tokenId,uint amount0ToAdd,uint amount1ToAdd) = abi.decode(transactionMap[_transactionId].data, (address , address , uint , uint ,uint));
+            outputData  = _increaseLiquidityCurrentRange(token0, token1, tokenId, amount0ToAdd, amount1ToAdd);
+        }else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_decreaseLiquidityCurrentRange"))))) {
+            (uint tokenId,uint128 liquidity) = abi.decode(transactionMap[_transactionId].data, (uint ,uint128 ));
+            outputData  = _decreaseLiquidityCurrentRange( tokenId, liquidity);
+        }else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_removePool"))))) {
+            (uint tokenId, uint128 liquidity) = abi.decode(transactionMap[_transactionId].data, (uint ,uint128 ));
+            outputData  = _removePool(  tokenId,  liquidity);
+        }else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_transferERC20"))))) {
+            (address tokenContractAddress,address recipient,uint256 amount) = abi.decode(transactionMap[_transactionId].data, (address ,address ,uint256  ));
+            _transferERC20( tokenContractAddress, recipient, amount);
+        }else if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_sendEther"))))) {
+            (address payable recipient, uint256 amount) = abi.decode(transactionMap[_transactionId].data, (address  , uint256   ));
+            _sendEther( recipient, amount);
         }
     }
 
