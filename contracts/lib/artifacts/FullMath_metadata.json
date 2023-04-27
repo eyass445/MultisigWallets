@@ -42,11 +42,11 @@
 			]
 		},
 		"contracts/lib/UniswapV3PriceCalculator.sol": {
-			"keccak256": "0xd9a24a76c4903445a4e83ee4240de38e701ad4d18299e19298b2d35f49ba5fa3",
+			"keccak256": "0x50769d29efa35f0db307722bdede1b2c45f0c01277a9cb1255c75962f334baef",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e86bad3f508f617480cf476caeeac3235677aea5abe40f1a12e4322106ce69c4",
-				"dweb:/ipfs/QmUHKhZoBkbMqGGcUvNwKGkRCfbq4iEKRqdJwv6trCfrrV"
+				"bzz-raw://16042641a7b3401d6205e26581316bc881bc9c6917e93f09fe6c1f6e0a000bb0",
+				"dweb:/ipfs/QmZBFVSBjXNC9KuoRz7yfJf6TmgfXEkJPx2fvmgGt2sPSw"
 			]
 		},
 		"https://github.com/Uniswap/v3-core/blob/0.8/contracts/libraries/TickMath.sol": {

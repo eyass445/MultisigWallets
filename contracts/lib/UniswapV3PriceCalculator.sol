@@ -143,7 +143,7 @@ library UniswapV3PriceCalculator {
         return y;
     }
 
-
+    // Function to calculate the sqrtPriceX96 from a given price
     function calculateSqrtPriceX96(uint256 price) internal pure returns (uint160 sqrtPriceX96) {
         sqrtPriceX96 = uint160(sqrt(price) * 2 ** 96);
     }
@@ -151,7 +151,7 @@ library UniswapV3PriceCalculator {
     
 
 
-
+    // Function to convert sqrtPriceX96 to a uint256 value
     function sqrtPriceX96ToUint(uint160 sqrtPriceX96, uint8 decimalsToken0)  internal pure returns (uint256){
         uint256 numerator1 = uint256(sqrtPriceX96) * uint256(sqrtPriceX96);
         uint256 numerator2 = 10**decimalsToken0;
@@ -159,14 +159,14 @@ library UniswapV3PriceCalculator {
     }
 
 
-
+    // Function to get the sqrtPriceX96 at a given tick
     function getSqrtPriceAtTick(int24 tick) internal pure returns (uint160 sqrtPriceX96) {
         sqrtPriceX96 = TickMath.getSqrtRatioAtTick(tick);
     }
   
    
 
-
+    // Function to get the tick at a given sqrtPriceX96
     function getTickAtSqrtRatio(uint160 sqrtPriceX96) internal pure returns (int24 tick) {
         tick = TickMath.getTickAtSqrtRatio(sqrtPriceX96);
     }
@@ -187,6 +187,7 @@ library UniswapV3PriceCalculator {
         tickLower = TickMath.getTickAtSqrtRatio(minPrice);
         tickUpper = TickMath.getTickAtSqrtRatio(maxPrice);
 
+        // Ensure tickLower and tickUpper are within the valid range
         require(
             tickLower < tickUpper && tickLower >= TickMath.MIN_TICK && tickUpper <= TickMath.MAX_TICK,
             "Ticks out of range"

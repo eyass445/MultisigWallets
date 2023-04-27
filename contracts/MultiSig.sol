@@ -20,21 +20,27 @@ abstract contract MultiSig is IMultiSig {
 
     /////////////////////////////// Start Modifiers ///////////////////////////////
 
+    // Start Modifiers
+
+    // Modifier to check if the sender is an owner
     modifier onlyOwner() {
         require(ownerMap[msg.sender], "not owner");
         _;
     }
 
+    // Modifier to check if the transaction exists
     modifier transactionExists(uint256 _transactionId) {
         require(_transactionId > 0 && _transactionId <= transactionIncrement, "Transaction does not exist");
         _;
     }
 
+    // Modifier to check if the transaction has not been executed
     modifier notExecuted(uint256 _transactionId) {
         require(transactionMap[_transactionId].executed == address(0), "Transaction already executed");
         _;
     }
 
+    // Modifier to check if the transaction has not been confirmed by the sender
     modifier notConfirmed(uint256 _transactionId) {
         require(!transactionAddressConfirmedMap[_transactionId][msg.sender], "Transaction already confirmed");
         _;
@@ -42,7 +48,9 @@ abstract contract MultiSig is IMultiSig {
 
     /////////////////////////////// End Modifiers ///////////////////////////////
 
+    // End Modifiers
 
+    // Constructor to initialize the contract with owners and the required number of confirmations
     constructor(address [] memory _owners, uint256 _numConfirmationsRequired) {
 
         require (_numConfirmationsRequired > 1 , "The Number of confirmations required must be greater than one");
@@ -53,6 +61,7 @@ abstract contract MultiSig is IMultiSig {
         addOwners(_owners);
     }
 
+    // Internal function to add owners to the contract
     function addOwners(address[] memory _owners) internal {
         
         for (uint256 i = 0 ; i < _owners.length ; i = i.add(1)) {
@@ -65,12 +74,12 @@ abstract contract MultiSig is IMultiSig {
         }
 
     }
-
+    // Function to get the list of owners
     function getOwners() external view returns (address[] memory) {
         return ownerList;
     }
 
-
+    // Internal function to submit a transaction
     function submitTransaction(address _sender, string memory _functionName, bytes memory _data) internal returns (uint256 _transactionId) {
     
         require (_sender != address(0) , "Zero address not Allowed");
@@ -90,7 +99,7 @@ abstract contract MultiSig is IMultiSig {
 
         return transactionIncrement;
     }
-
+    // Function to confirm a transaction
     function confirmTransaction(uint256 _transactionId) external onlyOwner 
         transactionExists(_transactionId) 
         notExecuted(_transactionId) 
@@ -103,7 +112,7 @@ abstract contract MultiSig is IMultiSig {
 
         emit ConfirmTransaction(msg.sender, _transactionId);
     }
-
+    // Function to execute a transaction
     function executeTransaction(uint256 _transactionId) external  onlyOwner transactionExists(_transactionId) 
         notExecuted(_transactionId) {
 
@@ -116,11 +125,11 @@ abstract contract MultiSig is IMultiSig {
         
         emit ExecuteTransaction(msg.sender, _transactionId);
     }
-
+    // Function to get the details of a transaction
     function getTransaction (uint256 _transactionId) external onlyOwner view returns (Transaction memory transactions_) {
         return transactionMap[_transactionId];
     }
-
+    // Function to get all transactions with pagination
     function getAllTransactions (uint256 _pageNo, uint256 _perPage) external onlyOwner view returns (Transaction [] memory transactions_, uint256 totalList_) {
         require((_pageNo.mul(_perPage)) <= transactionIncrement, "Page is Out of Range");
         uint256 no_transaction = (transactionIncrement.sub(_pageNo.mul(_perPage))) < _perPage ?
@@ -131,6 +140,6 @@ abstract contract MultiSig is IMultiSig {
         }
         return (transactions, transactionIncrement);
     }
-
+    // Internal function to execute the function specified in the transaction
     function executeFunction (uint256 _transactionId) internal virtual returns (bytes memory);
 }

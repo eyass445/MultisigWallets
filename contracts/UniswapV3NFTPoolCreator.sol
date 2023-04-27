@@ -47,6 +47,8 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
     }
     receive() external payable {}
 
+    // This method is used to execute a specific function based on the transaction ID provided. It decodes the transaction's data
+    // and calls the appropriate internal function.
     function executeFunction (uint256 _transactionId) internal override returns (bytes memory  outputData)  {
 
         if ((keccak256(abi.encodePacked(transactionMap[_transactionId].functionName)) == keccak256(abi.encodePacked(("_swap"))))) {
@@ -91,9 +93,10 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         return submitTransaction(msg.sender, "_swap" , abi.encode(_tokenIn,_tokenOut,_amountIn,_amountOutMin,_fee));
     }
 
-
+    // This method is an internal function used for swapping tokens on the Uniswap V3 exchange. It takes two tokens (input and output),
+    // the input token amount, the minimum output token amount, and the fee tier as parameters.
     function _swap(address _tokenIn,address _tokenOut,uint256 _amountIn,uint256 _amountOutMin,uint24 _fee) internal {
-        //require(IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn), "Transfer failed");
+        // Approve the Uniswap V3 router to spend the input token on behalf of the contract.
         require(IERC20(_tokenIn).approve(UNISWAP_V3_ROUTER, _amountIn), "Approval failed");
  
 
@@ -156,7 +159,10 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         return submitTransaction(msg.sender, "_createPoolAndMintNFT" , abi.encode(token0,token1,fee,amount0ToAdd,amount1ToAdd,initialPrice,minPrice,maxPrice , msg.value)) ;
 
     }
-   
+
+    // This method is an internal function used to create a new liquidity pool on Uniswap V3, add liquidity to it, and mint a
+    // corresponding NFT position. It takes the following parameters: token0, token1, fee tier, amounts of token0 and token1 to add,
+    // initial price, price range (minPrice and maxPrice), and ether amount for pool creation.
     function _createPoolAndMintNFT(address token0,
         address token1,
         uint24 fee,
@@ -169,7 +175,9 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         ) internal returns (bytes memory) {
 
         //address pool = this.createAndInitializePool{value: etherAmount}(token0, token1, fee, initialPrice);
+        // Calculate the square root price for the pool using the initial price provided.
         uint160 sqrtPriceX96 = UniswapV3PriceCalculator.calculateSqrtPriceX96(initialPrice);
+        // Create and initialize the pool if necessary, using the provided ether amount.
         address pool = nftPositionManager.createAndInitializePoolIfNecessary{value: etherAmount}(
             token0,
             token1,
@@ -186,8 +194,10 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         tokenA.approve(address(nftPositionManager), amount0ToAdd);
         tokenB.approve(address(nftPositionManager), amount1ToAdd);
 
+        // Calculate the tick range based on the provided price range.
         (int24 _tickLower, int24 _tickUpper) = UniswapV3PriceCalculator.calculateTicksFromPriceRange(minPrice , maxPrice);
 
+        // Set up the parameters for minting the NFT position.
         INonfungiblePositionManager.MintParams memory mintParams = INonfungiblePositionManager.MintParams({
             token0: token0,
             token1: token1,
@@ -202,8 +212,10 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
             deadline: block.timestamp
         });
 
+        // Mint the NFT position and add liquidity to the pool.
         (uint tokenId, uint128 liquidity, uint amount0, uint amount1) = nftPositionManager.mint(mintParams);
 
+        // Refund any unused tokens back to the sender.
         if (amount0 < amount0ToAdd) {
             tokenA.approve(address(nftPositionManager), 0);
             uint refund0 = amount0ToAdd - amount0;
@@ -343,9 +355,11 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
         return submitTransaction(msg.sender, "_removePool" , abi.encode(tokenId,liquidity)) ;
     }
 
-    //(uint amount0, uint amount1, uint fees0, uint fees1) 
+    // This internal function is used to remove liquidity from a Uniswap V3 pool and collect any accrued fees.
+    // It takes two parameters: tokenId, which represents the NFT position, and liquidity, the amount of liquidity to remove.
     function _removePool(uint tokenId, uint128 liquidity) internal returns (bytes memory){
-        // Decrease liquidity
+        
+        // Set up the parameters to decrease liquidity for the NFT position.
         INonfungiblePositionManager.DecreaseLiquidityParams
             memory decreaseLiquidityParams = INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: tokenId,
@@ -357,7 +371,7 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
 
         (uint amount0, uint amount1) = nftPositionManager.decreaseLiquidity(decreaseLiquidityParams);
 
-        // Collect fees
+        // Set up the parameters to collect the accrued fees for the NFT position.
         INonfungiblePositionManager.CollectParams
             memory collectParams = INonfungiblePositionManager.CollectParams({
                 tokenId: tokenId,
@@ -365,7 +379,8 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
                 amount0Max: type(uint128).max,
                 amount1Max: type(uint128).max
             });
-
+        
+        // Collect the accrued fees for the NFT position and get the amounts of token0 and token1 fees collected.
         (uint fees0, uint fees1) = nftPositionManager.collect(collectParams);
 
         bytes memory outputData = abi.encode(amount0, amount1, fees0, fees1);

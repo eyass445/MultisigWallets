@@ -13,6 +13,8 @@ interface IUniswapV3PoolCreator {
     //     bytes calldata data
     // ) external returns (bytes4);
 
+    // Function to perform a swap between two tokens
+
     function swap(
         address _tokenIn,
         address _tokenOut,
@@ -21,10 +23,13 @@ interface IUniswapV3PoolCreator {
         uint24 _fee
     ) external;
 
+    // Function to unwrap WETH to ETH
     function unwrapWETH(address wtoken, uint256 amount) external;
 
+    // Function to wrap ETH to WETH
     function wrapETH(address wtoken, uint256 amount) external;
 
+    // Function to transfer and approve tokens
     function transferAndApprove(
         IERC20 tokenA,
         IWETH tokenB,
@@ -32,6 +37,7 @@ interface IUniswapV3PoolCreator {
         uint amount1ToAdd
     ) external;
 
+    // Function to create a pool, mint an NFT, and add liquidity
     function createPoolAndMintNFT(
         address token0,
         address token1,
@@ -43,6 +49,7 @@ interface IUniswapV3PoolCreator {
         uint160 maxPrice
     ) external payable returns (address pool, int24 _tickLower, int24 _tickUpper, uint tokenId, uint128 liquidity, uint amount0, uint amount1);
 
+    // Function to create and initialize a Uniswap V3 pool
     function createAndInitializePool(
         address token0,
         address token1,

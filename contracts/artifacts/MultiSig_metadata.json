@@ -263,11 +263,11 @@
 	},
 	"sources": {
 		"contracts/MultiSig.sol": {
-			"keccak256": "0x88e7a90c3382f1f68db011c2e22d5c45441ea208c1271ebd744928f9896bce7a",
+			"keccak256": "0xc8a5d8267c89791ea0f010271ac60c3ec41f116081f0e195e241bc86f65e85d6",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://2d844de9fa4e7a16026f3d489629dcd41ffd7b0eafdcbf781c5b7e099234bf75",
-				"dweb:/ipfs/QmQhba4hCTD5748MUoHPFB7Xo2iozvZFGJHjDAf4ds6NBF"
+				"bzz-raw://0ccffd061b044e33c26f3056a64dcb00a27d44b98d556b6f451108a1c5a609e4",
+				"dweb:/ipfs/QmbyqLHZ3cqWGGfjyUYE8Y8wN8eiHGcJtb6XdXt51GemrG"
 			]
 		},
 		"contracts/interfaces/IMultiSig.sol": {
