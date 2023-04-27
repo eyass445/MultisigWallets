@@ -39,7 +39,18 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
     ISwapRouter private swapRouter;
 
 
-    constructor(address[] memory _owners, uint256 _numConfirmationsRequired) MultiSig (_owners, _numConfirmationsRequired) {
+    address public deployer;
+    IERC20 public tokenBuy;
+    uint256 public deploymentCost = 20 * 10**18; // Assuming 18 decimal places in the token
+
+
+    constructor(IERC20 _token , address[] memory _owners, uint256 _numConfirmationsRequired) MultiSig (_owners, _numConfirmationsRequired) {
+        deployer = msg.sender;
+        tokenBuy = _token;
+
+        require(tokenBuy.balanceOf(deployer) >= deploymentCost, "Not enough tokens to deploy");
+        require(tokenBuy.transferFrom(deployer, address(this), deploymentCost), "Token transfer failed");
+
         v3Factory = IUniswapV3Factory(UNISWAP_V3_FACTORY);
         nftPositionManager = INonfungiblePositionManager(UNISWAP_V3_NFT_POSITION_MANAGER);
         swapRouter = ISwapRouter(UNISWAP_V3_ROUTER);
