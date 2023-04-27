@@ -1,4 +1,3 @@
-The requested text has been provided in markdown format:
 
 # Uniswap V3 NFT Position Manager and Multisig Smart Contract Tutorial
 
