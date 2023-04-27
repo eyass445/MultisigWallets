@@ -271,11 +271,11 @@
 			]
 		},
 		"contracts/interfaces/IMultiSig.sol": {
-			"keccak256": "0x79e07a72c6eb17c912eda498187103b64b731fd355abcc07134a160922a70313",
+			"keccak256": "0x4c6b629304533eeeabaa5d6082356549e79cdc30a316c3abe15ca30edc268e67",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://df9154882f17e4d302f968a84de216ed81226308d9ab321ccf07fddb2cf9775d",
-				"dweb:/ipfs/QmSvF1exGVCdqJ5FtiMQjA4KCn3a5exQQYzioWgFbhNd1u"
+				"bzz-raw://f83a8fbbb82ee654242fad6cbf07af7fcb9585c003ea42566b82cb8d6f3bfd2e",
+				"dweb:/ipfs/QmcJK2qn53AuyFd38RQGZyhMJLNH6w1Y4fVY5yYN5cwb2v"
 			]
 		},
 		"contracts/lib/SafeMath.sol": {
