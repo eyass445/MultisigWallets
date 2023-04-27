@@ -1,4 +1,4 @@
-    # Title: Uniswap V3 NFT Position Manager and Multisig Smart Contract Tutorial
+    Title: Uniswap V3 NFT Position Manager and Multisig Smart Contract Tutorial
 
     Introduction:
     This tutorial explains how to use a smart contract that combines Uniswap V3's NFT position management with multisig wallet functionality. The contract allows multiple users to manage Uniswap V3 liquidity pools, NFT positions, and transfer tokens (ERC20) and Ether.

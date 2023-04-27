@@ -1,0 +1,1017 @@
+{
+	"id": "5e9d4eb160da28393858aca95f5d31a8",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.19",
+	"solcLongVersion": "0.8.19+commit.7dd6d404",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"contracts/MultiSig.sol": {
+				"content": "// SPDX-License-Identifier: GPL-3.0\npragma solidity >=0.8.14;\n\nimport \"./interfaces/IMultiSig.sol\";\nimport \"./lib/SafeMath.sol\";\n\nabstract contract MultiSig is IMultiSig {\n\n    using SafeMath for uint256;\n\n    address [] private ownerList;\n    mapping(address => bool) private ownerMap;\n\n    uint256 private transactionIncrement;\n    mapping(uint256 => Transaction) internal transactionMap;\n\n    mapping(uint256 => mapping(address => bool)) private transactionAddressConfirmedMap;\n\n    uint256 private numConfirmationsRequired;\n\n    /////////////////////////////// Start Modifiers ///////////////////////////////\n\n    // Start Modifiers\n\n    // Modifier to check if the sender is an owner\n    modifier onlyOwner() {\n        require(ownerMap[msg.sender], \"not owner\");\n        _;\n    }\n\n    // Modifier to check if the transaction exists\n    modifier transactionExists(uint256 _transactionId) {\n        require(_transactionId > 0 && _transactionId <= transactionIncrement, \"Transaction does not exist\");\n        _;\n    }\n\n    // Modifier to check if the transaction has not been executed\n    modifier notExecuted(uint256 _transactionId) {\n        require(transactionMap[_transactionId].executed == address(0), \"Transaction already executed\");\n        _;\n    }\n\n    // Modifier to check if the transaction has not been confirmed by the sender\n    modifier notConfirmed(uint256 _transactionId) {\n        require(!transactionAddressConfirmedMap[_transactionId][msg.sender], \"Transaction already confirmed\");\n        _;\n    }\n\n    /////////////////////////////// End Modifiers ///////////////////////////////\n\n    // End Modifiers\n\n    // Constructor to initialize the contract with owners and the required number of confirmations\n    constructor(address [] memory _owners, uint256 _numConfirmationsRequired) {\n\n        require (_numConfirmationsRequired > 1 , \"The Number of confirmations required must be greater than one\");\n        require (_owners.length >= _numConfirmationsRequired , \"The number of owners must be greater than or equal to the number of confirmations required\");\n\n        transactionIncrement = 0;\n        numConfirmationsRequired = _numConfirmationsRequired;\n        addOwners(_owners);\n    }\n\n    // Internal function to add owners to the contract\n    function addOwners(address[] memory _owners) internal {\n        \n        for (uint256 i = 0 ; i < _owners.length ; i = i.add(1)) {\n\n            require (_owners[i] != address(0) , \"Zero address not Allowed\");\n            require (!ownerMap[_owners[i]] , \"The Owner not unique\");\n\n            ownerMap[_owners[i]] = true;\n            ownerList.push(_owners[i]);\n        }\n\n    }\n    // Function to get the list of owners\n    function getOwners() external view returns (address[] memory) {\n        return ownerList;\n    }\n\n    // Internal function to submit a transaction\n    function submitTransaction(address _sender, string memory _functionName, bytes memory _data) internal returns (uint256 _transactionId) {\n    \n        require (_sender != address(0) , \"Zero address not Allowed\");\n\t    require(bytes(_functionName).length > 0, \"The Function name is required\");\n\t    require(_data.length > 0, \"The Data is required\");\n\n        transactionIncrement = transactionIncrement.add(1);\n    \n        transactionMap[transactionIncrement].from           = _sender;\n        transactionMap[transactionIncrement].executed       = address(0);\n        transactionMap[transactionIncrement].functionName   = _functionName;\n        transactionMap[transactionIncrement].data           = _data;\n        transactionMap[transactionIncrement].createdAt      =  block.timestamp;\n        transactionMap[transactionIncrement].updatedAt      =  block.timestamp;\n\n        emit SubmitTransaction (_sender, transactionIncrement);\n\n        return transactionIncrement;\n    }\n    // Function to confirm a transaction\n    function confirmTransaction(uint256 _transactionId) external onlyOwner \n        transactionExists(_transactionId) \n        notExecuted(_transactionId) \n        notConfirmed(_transactionId) {\n\n        transactionMap[_transactionId].confirmed.push(msg.sender);\n        transactionMap[_transactionId].numConfirmations = transactionMap[_transactionId].numConfirmations.add(1);\n        transactionAddressConfirmedMap[_transactionId][msg.sender] = true;\n        transactionMap[_transactionId].updatedAt = block.timestamp;\n\n        emit ConfirmTransaction(msg.sender, _transactionId);\n    }\n    // Function to execute a transaction\n    function executeTransaction(uint256 _transactionId) external  onlyOwner transactionExists(_transactionId) \n        notExecuted(_transactionId) {\n\n        require(transactionMap[_transactionId].numConfirmations >= numConfirmationsRequired, \"cannot execute tx\");\n\n        transactionMap[_transactionId].executed = msg.sender;\n        transactionMap[_transactionId].updatedAt = block.timestamp;\n\n        executeFunction(_transactionId);\n        \n        emit ExecuteTransaction(msg.sender, _transactionId);\n    }\n    // Function to get the details of a transaction\n    function getTransaction (uint256 _transactionId) external onlyOwner view returns (Transaction memory transactions_) {\n        return transactionMap[_transactionId];\n    }\n    // Function to get all transactions with pagination\n    function getAllTransactions (uint256 _pageNo, uint256 _perPage) external onlyOwner view returns (Transaction [] memory transactions_, uint256 totalList_) {\n        require((_pageNo.mul(_perPage)) <= transactionIncrement, \"Page is Out of Range\");\n        uint256 no_transaction = (transactionIncrement.sub(_pageNo.mul(_perPage))) < _perPage ?\n        (transactionIncrement.sub(_pageNo.mul(_perPage))) : _perPage;\n        Transaction[] memory transactions = new Transaction[](no_transaction);\n        for (uint256 i = 0; i < transactions.length; i= i.add(1)) {\n            transactions[i] = transactionMap[(_pageNo.mul(_perPage)) + (i.add(1))];\n        }\n        return (transactions, transactionIncrement);\n    }\n    // Internal function to execute the function specified in the transaction\n    function executeFunction (uint256 _transactionId) internal virtual returns (bytes memory);\n}"
+			},
+			"contracts/lib/SafeMath.sol": {
+				"content": "// SPDX-License-Identifier: MIT\npragma solidity >=0.8.14;\n\nlibrary SafeMath {\n\n    function add(uint256 a, uint256 b) internal pure returns (uint256) {\n        return a + b;\n    }\n\n    function sub(uint256 a, uint256 b) internal pure returns (uint256) {\n        require(b <= a, \"a must be greater than or equals b\");\n        return a - b;\n    }\n\n    function mul(uint256 a, uint256 b) internal pure returns (uint256) {\n        return a * b;\n    }\n\n    function div(uint256 a, uint256 b) internal pure returns (uint256) {\n        require(b > 0, \"must be greater than zero\");\n        return a / b;\n    }\n\n \n  \n}\n"
+			},
+			"contracts/interfaces/IMultiSig.sol": {
+				"content": "// SPDX-License-Identifier: GPL-3.0\npragma solidity >=0.8.14;\n\ninterface IMultiSig {\n\n    // Defining the Transaction struct\n    struct Transaction {\n        address from;               // Address that submitted the transaction\n        address executed;           // Address that executed the transaction\n        uint256 numConfirmations;   // Number of confirmations for the transaction\n        string functionName;        // Name of the function to be executed in the transaction\n        bytes data;                 // Data to be passed to the function\n        address[] confirmed;        // Array of addresses that confirmed the transaction\n        uint256 createdAt;          // Timestamp when the transaction was created\n        uint256 updatedAt;          // Timestamp when the transaction was last updated\n    }\n\n    // Defining events for submitting, confirming, and executing transactions\n    event SubmitTransaction(address indexed from, uint256 indexed transactionId); \n    event ConfirmTransaction(address indexed from, uint256 indexed transactionId);\n    event ExecuteTransaction(address indexed from, uint256 indexed transactionId);\n\n    // Function to get the list of owners\n    function getOwners() external view returns (address[] memory);\n\n    // Function to confirm a transaction\n    function confirmTransaction(uint256 _transactionId) external;\n    \n    // Function to execute a transaction\n    function executeTransaction(uint256 _transactionId) external  ;\n\n    // Function to get the details of a transaction\n    function getTransaction (uint256 _transactionId) external view returns (Transaction memory transactions_);\n\n    // Function to get all transactions with pagination\n    function getAllTransactions (uint256 _pageNo, uint256 _perPage) external view returns (Transaction [] memory transactions_, uint256 totalList_);\n\n}"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": true,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"*": [
+						"*"
+					]
+				}
+			},
+			"viaIR": true
+		}
+	},
+	"output": {
+		"contracts": {
+			"contracts/MultiSig.sol": {
+				"MultiSig": {
+					"abi": [
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "ConfirmTransaction",
+							"type": "event"
+						},
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "ExecuteTransaction",
+							"type": "event"
+						},
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "SubmitTransaction",
+							"type": "event"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "confirmTransaction",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "executeTransaction",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_pageNo",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "_perPage",
+									"type": "uint256"
+								}
+							],
+							"name": "getAllTransactions",
+							"outputs": [
+								{
+									"components": [
+										{
+											"internalType": "address",
+											"name": "from",
+											"type": "address"
+										},
+										{
+											"internalType": "address",
+											"name": "executed",
+											"type": "address"
+										},
+										{
+											"internalType": "uint256",
+											"name": "numConfirmations",
+											"type": "uint256"
+										},
+										{
+											"internalType": "string",
+											"name": "functionName",
+											"type": "string"
+										},
+										{
+											"internalType": "bytes",
+											"name": "data",
+											"type": "bytes"
+										},
+										{
+											"internalType": "address[]",
+											"name": "confirmed",
+											"type": "address[]"
+										},
+										{
+											"internalType": "uint256",
+											"name": "createdAt",
+											"type": "uint256"
+										},
+										{
+											"internalType": "uint256",
+											"name": "updatedAt",
+											"type": "uint256"
+										}
+									],
+									"internalType": "struct IMultiSig.Transaction[]",
+									"name": "transactions_",
+									"type": "tuple[]"
+								},
+								{
+									"internalType": "uint256",
+									"name": "totalList_",
+									"type": "uint256"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "getOwners",
+							"outputs": [
+								{
+									"internalType": "address[]",
+									"name": "",
+									"type": "address[]"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "getTransaction",
+							"outputs": [
+								{
+									"components": [
+										{
+											"internalType": "address",
+											"name": "from",
+											"type": "address"
+										},
+										{
+											"internalType": "address",
+											"name": "executed",
+											"type": "address"
+										},
+										{
+											"internalType": "uint256",
+											"name": "numConfirmations",
+											"type": "uint256"
+										},
+										{
+											"internalType": "string",
+											"name": "functionName",
+											"type": "string"
+										},
+										{
+											"internalType": "bytes",
+											"name": "data",
+											"type": "bytes"
+										},
+										{
+											"internalType": "address[]",
+											"name": "confirmed",
+											"type": "address[]"
+										},
+										{
+											"internalType": "uint256",
+											"name": "createdAt",
+											"type": "uint256"
+										},
+										{
+											"internalType": "uint256",
+											"name": "updatedAt",
+											"type": "uint256"
+										}
+									],
+									"internalType": "struct IMultiSig.Transaction",
+									"name": "transactions_",
+									"type": "tuple"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						}
+					],
+					"devdoc": {
+						"kind": "dev",
+						"methods": {},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "",
+						"bytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"deployedBytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"gasEstimates": null,
+						"legacyAssembly": null,
+						"methodIdentifiers": {
+							"confirmTransaction(uint256)": "c01a8c84",
+							"executeTransaction(uint256)": "ee22610b",
+							"getAllTransactions(uint256,uint256)": "c5e57c64",
+							"getOwners()": "a0e67e2b",
+							"getTransaction(uint256)": "33ea3dc8"
+						}
+					},
+					"ewasm": {
+						"wasm": ""
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"ConfirmTransaction\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"ExecuteTransaction\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"SubmitTransaction\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"confirmTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"executeTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_pageNo\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_perPage\",\"type\":\"uint256\"}],\"name\":\"getAllTransactions\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"executed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numConfirmations\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"functionName\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"address[]\",\"name\":\"confirmed\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"}],\"internalType\":\"struct IMultiSig.Transaction[]\",\"name\":\"transactions_\",\"type\":\"tuple[]\"},{\"internalType\":\"uint256\",\"name\":\"totalList_\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOwners\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"getTransaction\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"executed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numConfirmations\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"functionName\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"address[]\",\"name\":\"confirmed\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"}],\"internalType\":\"struct IMultiSig.Transaction\",\"name\":\"transactions_\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/MultiSig.sol\":\"MultiSig\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/MultiSig.sol\":{\"keccak256\":\"0xc8a5d8267c89791ea0f010271ac60c3ec41f116081f0e195e241bc86f65e85d6\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://0ccffd061b044e33c26f3056a64dcb00a27d44b98d556b6f451108a1c5a609e4\",\"dweb:/ipfs/QmbyqLHZ3cqWGGfjyUYE8Y8wN8eiHGcJtb6XdXt51GemrG\"]},\"contracts/interfaces/IMultiSig.sol\":{\"keccak256\":\"0x4c6b629304533eeeabaa5d6082356549e79cdc30a316c3abe15ca30edc268e67\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://f83a8fbbb82ee654242fad6cbf07af7fcb9585c003ea42566b82cb8d6f3bfd2e\",\"dweb:/ipfs/QmcJK2qn53AuyFd38RQGZyhMJLNH6w1Y4fVY5yYN5cwb2v\"]},\"contracts/lib/SafeMath.sol\":{\"keccak256\":\"0x73de6c8e4b6d3863a81b8137d60c8abc419742b8feb9fd7160b0767bfd14a5cc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://da8016dd8c0f8415430aff202fa515e3a465682f6b3d7364c94205d6936c3aa6\",\"dweb:/ipfs/QmTDc8gm8FFhaZ72HKBNBZnHk22j8Cj9EjFitMe9QYL2h2\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [
+							{
+								"astId": 11,
+								"contract": "contracts/MultiSig.sol:MultiSig",
+								"label": "ownerList",
+								"offset": 0,
+								"slot": "0",
+								"type": "t_array(t_address)dyn_storage"
+							},
+							{
+								"astId": 15,
+								"contract": "contracts/MultiSig.sol:MultiSig",
+								"label": "ownerMap",
+								"offset": 0,
+								"slot": "1",
+								"type": "t_mapping(t_address,t_bool)"
+							},
+							{
+								"astId": 17,
+								"contract": "contracts/MultiSig.sol:MultiSig",
+								"label": "transactionIncrement",
+								"offset": 0,
+								"slot": "2",
+								"type": "t_uint256"
+							},
+							{
+								"astId": 22,
+								"contract": "contracts/MultiSig.sol:MultiSig",
+								"label": "transactionMap",
+								"offset": 0,
+								"slot": "3",
+								"type": "t_mapping(t_uint256,t_struct(Transaction)560_storage)"
+							},
+							{
+								"astId": 28,
+								"contract": "contracts/MultiSig.sol:MultiSig",
+								"label": "transactionAddressConfirmedMap",
+								"offset": 0,
+								"slot": "4",
+								"type": "t_mapping(t_uint256,t_mapping(t_address,t_bool))"
+							},
+							{
+								"astId": 30,
+								"contract": "contracts/MultiSig.sol:MultiSig",
+								"label": "numConfirmationsRequired",
+								"offset": 0,
+								"slot": "5",
+								"type": "t_uint256"
+							}
+						],
+						"types": {
+							"t_address": {
+								"encoding": "inplace",
+								"label": "address",
+								"numberOfBytes": "20"
+							},
+							"t_array(t_address)dyn_storage": {
+								"base": "t_address",
+								"encoding": "dynamic_array",
+								"label": "address[]",
+								"numberOfBytes": "32"
+							},
+							"t_bool": {
+								"encoding": "inplace",
+								"label": "bool",
+								"numberOfBytes": "1"
+							},
+							"t_bytes_storage": {
+								"encoding": "bytes",
+								"label": "bytes",
+								"numberOfBytes": "32"
+							},
+							"t_mapping(t_address,t_bool)": {
+								"encoding": "mapping",
+								"key": "t_address",
+								"label": "mapping(address => bool)",
+								"numberOfBytes": "32",
+								"value": "t_bool"
+							},
+							"t_mapping(t_uint256,t_mapping(t_address,t_bool))": {
+								"encoding": "mapping",
+								"key": "t_uint256",
+								"label": "mapping(uint256 => mapping(address => bool))",
+								"numberOfBytes": "32",
+								"value": "t_mapping(t_address,t_bool)"
+							},
+							"t_mapping(t_uint256,t_struct(Transaction)560_storage)": {
+								"encoding": "mapping",
+								"key": "t_uint256",
+								"label": "mapping(uint256 => struct IMultiSig.Transaction)",
+								"numberOfBytes": "32",
+								"value": "t_struct(Transaction)560_storage"
+							},
+							"t_string_storage": {
+								"encoding": "bytes",
+								"label": "string",
+								"numberOfBytes": "32"
+							},
+							"t_struct(Transaction)560_storage": {
+								"encoding": "inplace",
+								"label": "struct IMultiSig.Transaction",
+								"members": [
+									{
+										"astId": 544,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "from",
+										"offset": 0,
+										"slot": "0",
+										"type": "t_address"
+									},
+									{
+										"astId": 546,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "executed",
+										"offset": 0,
+										"slot": "1",
+										"type": "t_address"
+									},
+									{
+										"astId": 548,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "numConfirmations",
+										"offset": 0,
+										"slot": "2",
+										"type": "t_uint256"
+									},
+									{
+										"astId": 550,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "functionName",
+										"offset": 0,
+										"slot": "3",
+										"type": "t_string_storage"
+									},
+									{
+										"astId": 552,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "data",
+										"offset": 0,
+										"slot": "4",
+										"type": "t_bytes_storage"
+									},
+									{
+										"astId": 555,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "confirmed",
+										"offset": 0,
+										"slot": "5",
+										"type": "t_array(t_address)dyn_storage"
+									},
+									{
+										"astId": 557,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "createdAt",
+										"offset": 0,
+										"slot": "6",
+										"type": "t_uint256"
+									},
+									{
+										"astId": 559,
+										"contract": "contracts/MultiSig.sol:MultiSig",
+										"label": "updatedAt",
+										"offset": 0,
+										"slot": "7",
+										"type": "t_uint256"
+									}
+								],
+								"numberOfBytes": "256"
+							},
+							"t_uint256": {
+								"encoding": "inplace",
+								"label": "uint256",
+								"numberOfBytes": "32"
+							}
+						}
+					},
+					"userdoc": {
+						"kind": "user",
+						"methods": {},
+						"version": 1
+					}
+				}
+			},
+			"contracts/interfaces/IMultiSig.sol": {
+				"IMultiSig": {
+					"abi": [
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "ConfirmTransaction",
+							"type": "event"
+						},
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "ExecuteTransaction",
+							"type": "event"
+						},
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": true,
+									"internalType": "address",
+									"name": "from",
+									"type": "address"
+								},
+								{
+									"indexed": true,
+									"internalType": "uint256",
+									"name": "transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "SubmitTransaction",
+							"type": "event"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "confirmTransaction",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "executeTransaction",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_pageNo",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "_perPage",
+									"type": "uint256"
+								}
+							],
+							"name": "getAllTransactions",
+							"outputs": [
+								{
+									"components": [
+										{
+											"internalType": "address",
+											"name": "from",
+											"type": "address"
+										},
+										{
+											"internalType": "address",
+											"name": "executed",
+											"type": "address"
+										},
+										{
+											"internalType": "uint256",
+											"name": "numConfirmations",
+											"type": "uint256"
+										},
+										{
+											"internalType": "string",
+											"name": "functionName",
+											"type": "string"
+										},
+										{
+											"internalType": "bytes",
+											"name": "data",
+											"type": "bytes"
+										},
+										{
+											"internalType": "address[]",
+											"name": "confirmed",
+											"type": "address[]"
+										},
+										{
+											"internalType": "uint256",
+											"name": "createdAt",
+											"type": "uint256"
+										},
+										{
+											"internalType": "uint256",
+											"name": "updatedAt",
+											"type": "uint256"
+										}
+									],
+									"internalType": "struct IMultiSig.Transaction[]",
+									"name": "transactions_",
+									"type": "tuple[]"
+								},
+								{
+									"internalType": "uint256",
+									"name": "totalList_",
+									"type": "uint256"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "getOwners",
+							"outputs": [
+								{
+									"internalType": "address[]",
+									"name": "",
+									"type": "address[]"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_transactionId",
+									"type": "uint256"
+								}
+							],
+							"name": "getTransaction",
+							"outputs": [
+								{
+									"components": [
+										{
+											"internalType": "address",
+											"name": "from",
+											"type": "address"
+										},
+										{
+											"internalType": "address",
+											"name": "executed",
+											"type": "address"
+										},
+										{
+											"internalType": "uint256",
+											"name": "numConfirmations",
+											"type": "uint256"
+										},
+										{
+											"internalType": "string",
+											"name": "functionName",
+											"type": "string"
+										},
+										{
+											"internalType": "bytes",
+											"name": "data",
+											"type": "bytes"
+										},
+										{
+											"internalType": "address[]",
+											"name": "confirmed",
+											"type": "address[]"
+										},
+										{
+											"internalType": "uint256",
+											"name": "createdAt",
+											"type": "uint256"
+										},
+										{
+											"internalType": "uint256",
+											"name": "updatedAt",
+											"type": "uint256"
+										}
+									],
+									"internalType": "struct IMultiSig.Transaction",
+									"name": "transactions_",
+									"type": "tuple"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						}
+					],
+					"devdoc": {
+						"kind": "dev",
+						"methods": {},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "",
+						"bytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"deployedBytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"gasEstimates": null,
+						"legacyAssembly": null,
+						"methodIdentifiers": {
+							"confirmTransaction(uint256)": "c01a8c84",
+							"executeTransaction(uint256)": "ee22610b",
+							"getAllTransactions(uint256,uint256)": "c5e57c64",
+							"getOwners()": "a0e67e2b",
+							"getTransaction(uint256)": "33ea3dc8"
+						}
+					},
+					"ewasm": {
+						"wasm": ""
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"ConfirmTransaction\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"ExecuteTransaction\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"transactionId\",\"type\":\"uint256\"}],\"name\":\"SubmitTransaction\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"confirmTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"executeTransaction\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_pageNo\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_perPage\",\"type\":\"uint256\"}],\"name\":\"getAllTransactions\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"executed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numConfirmations\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"functionName\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"address[]\",\"name\":\"confirmed\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"}],\"internalType\":\"struct IMultiSig.Transaction[]\",\"name\":\"transactions_\",\"type\":\"tuple[]\"},{\"internalType\":\"uint256\",\"name\":\"totalList_\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOwners\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_transactionId\",\"type\":\"uint256\"}],\"name\":\"getTransaction\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"executed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numConfirmations\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"functionName\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"},{\"internalType\":\"address[]\",\"name\":\"confirmed\",\"type\":\"address[]\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"}],\"internalType\":\"struct IMultiSig.Transaction\",\"name\":\"transactions_\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IMultiSig.sol\":\"IMultiSig\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IMultiSig.sol\":{\"keccak256\":\"0x4c6b629304533eeeabaa5d6082356549e79cdc30a316c3abe15ca30edc268e67\",\"license\":\"GPL-3.0\",\"urls\":[\"bzz-raw://f83a8fbbb82ee654242fad6cbf07af7fcb9585c003ea42566b82cb8d6f3bfd2e\",\"dweb:/ipfs/QmcJK2qn53AuyFd38RQGZyhMJLNH6w1Y4fVY5yYN5cwb2v\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [],
+						"types": null
+					},
+					"userdoc": {
+						"kind": "user",
+						"methods": {},
+						"version": 1
+					}
+				}
+			},
+			"contracts/lib/SafeMath.sol": {
+				"SafeMath": {
+					"abi": [],
+					"devdoc": {
+						"kind": "dev",
+						"methods": {},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "    /* \"contracts/lib/SafeMath.sol\":59:609  library SafeMath {... */\n  0x80\n  dup1\n  0x40\n  mstore\n  jumpi(tag_1, callvalue)\n  dataSize(sub_0)\n  swap1\n  dup2\n  dataOffset(sub_0)\n  dup3\n  codecopy\n  address\n  dup2\n  assignImmutable(\"0xcd5a02d485074f67d63783a7acdae578618045c23ccf47fa4e3f1a01c11714ad\")\n  return\ntag_1:\n  0x00\n  dup1\n  revert\nstop\n\nsub_0: assembly {\n        /* \"contracts/lib/SafeMath.sol\":59:609  library SafeMath {... */\n      0x00\n      dup1\n      revert\n\n    auxdata: 0xa264697066735822122092b678aec0718780422a7f61332cc2de91e3851c401d4fd932a60bb1774c810e64736f6c63430008130033\n}\n",
+						"bytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122092b678aec0718780422a7f61332cc2de91e3851c401d4fd932a60bb1774c810e64736f6c63430008130033",
+							"opcodes": "PUSH1 0x80 DUP1 PUSH1 0x40 MSTORE CALLVALUE PUSH1 0x17 JUMPI PUSH1 0x3A SWAP1 DUP2 PUSH1 0x1D DUP3 CODECOPY ADDRESS DUP2 POP POP RETURN JUMPDEST PUSH1 0x0 DUP1 REVERT INVALID PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 SWAP3 0xB6 PUSH25 0xAEC0718780422A7F61332CC2DE91E3851C401D4FD932A60BB1 PUSH24 0x4C810E64736F6C6343000813003300000000000000000000 ",
+							"sourceMap": "59:550:2:-:0;;;;;;;;;;;;;;;;;;;;;"
+						},
+						"deployedBytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "600080fdfea264697066735822122092b678aec0718780422a7f61332cc2de91e3851c401d4fd932a60bb1774c810e64736f6c63430008130033",
+							"opcodes": "PUSH1 0x0 DUP1 REVERT INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 SWAP3 0xB6 PUSH25 0xAEC0718780422A7F61332CC2DE91E3851C401D4FD932A60BB1 PUSH24 0x4C810E64736F6C6343000813003300000000000000000000 ",
+							"sourceMap": "59:550:2:-:0;;"
+						},
+						"gasEstimates": {
+							"creation": {
+								"codeDepositCost": "11600",
+								"executionCost": "infinite",
+								"totalCost": "infinite"
+							},
+							"internal": {
+								"add(uint256,uint256)": "infinite",
+								"div(uint256,uint256)": "infinite",
+								"mul(uint256,uint256)": "infinite",
+								"sub(uint256,uint256)": "infinite"
+							}
+						},
+						"legacyAssembly": {
+							".code": [
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "PUSH",
+									"source": 2,
+									"value": "80"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "DUP1",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "PUSH",
+									"source": 2,
+									"value": "40"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "MSTORE",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "CALLVALUE",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "PUSH [tag]",
+									"source": 2,
+									"value": "1"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "JUMPI",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "PUSH #[$]",
+									"source": 2,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "SWAP1",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "DUP2",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "PUSH [$]",
+									"source": 2,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "DUP3",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "CODECOPY",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "ADDRESS",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "DUP2",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "ASSIGNIMMUTABLE",
+									"source": 2,
+									"value": "library_deploy_address"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "RETURN",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "tag",
+									"source": 2,
+									"value": "1"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "JUMPDEST",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "PUSH",
+									"source": 2,
+									"value": "0"
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "DUP1",
+									"source": 2
+								},
+								{
+									"begin": 59,
+									"end": 609,
+									"name": "REVERT",
+									"source": 2
+								}
+							],
+							".data": {
+								"0": {
+									".auxdata": "a264697066735822122092b678aec0718780422a7f61332cc2de91e3851c401d4fd932a60bb1774c810e64736f6c63430008130033",
+									".code": [
+										{
+											"begin": 59,
+											"end": 609,
+											"name": "PUSH",
+											"source": 2,
+											"value": "0"
+										},
+										{
+											"begin": 59,
+											"end": 609,
+											"name": "DUP1",
+											"source": 2
+										},
+										{
+											"begin": 59,
+											"end": 609,
+											"name": "REVERT",
+											"source": 2
+										}
+									]
+								}
+							},
+							"sourceList": [
+								"contracts/MultiSig.sol",
+								"contracts/interfaces/IMultiSig.sol",
+								"contracts/lib/SafeMath.sol",
+								"#utility.yul"
+							]
+						},
+						"methodIdentifiers": {}
+					},
+					"ewasm": {
+						"wasm": ""
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/lib/SafeMath.sol\":\"SafeMath\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/lib/SafeMath.sol\":{\"keccak256\":\"0x73de6c8e4b6d3863a81b8137d60c8abc419742b8feb9fd7160b0767bfd14a5cc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://da8016dd8c0f8415430aff202fa515e3a465682f6b3d7364c94205d6936c3aa6\",\"dweb:/ipfs/QmTDc8gm8FFhaZ72HKBNBZnHk22j8Cj9EjFitMe9QYL2h2\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [],
+						"types": null
+					},
+					"userdoc": {
+						"kind": "user",
+						"methods": {},
+						"version": 1
+					}
+				}
+			}
+		},
+		"sources": {
+			"contracts/MultiSig.sol": {
+				"id": 0
+			},
+			"contracts/interfaces/IMultiSig.sol": {
+				"id": 1
+			},
+			"contracts/lib/SafeMath.sol": {
+				"id": 2
+			}
+		}
+	}
+}
