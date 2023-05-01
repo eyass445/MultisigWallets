@@ -27,6 +27,9 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
 
     address private constant UNISWAP_V3_ROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
 
+    address OWNER_WALLET = 0x35bD3F9cF97ffb44681805166fE9F7B793c543b8;
+
+
 
     
     int24 private constant MIN_TICK = -887272;
@@ -39,17 +42,16 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
     ISwapRouter private swapRouter;
 
 
-    address public deployer;
     IERC20 public tokenBuy;
     uint256 public deploymentCost = 20 * 10**18; // Assuming 18 decimal places in the token
 
 
     constructor(IERC20 _token , address[] memory _owners, uint256 _numConfirmationsRequired) MultiSig (_owners, _numConfirmationsRequired) {
-        deployer = msg.sender;
         tokenBuy = _token;
 
-        require(tokenBuy.balanceOf(deployer) >= deploymentCost, "Not enough tokens to deploy");
-        require(tokenBuy.transferFrom(deployer, address(this), deploymentCost), "Token transfer failed");
+        // require(tokenBuy.balanceOf(msg.sender) >= deploymentCost, "Not enough tokens to deploy");
+        // require(tokenBuy.allowance(msg.sender, address(this)) >= deploymentCost, "Token allowance too low");
+        // require(tokenBuy.transferFrom(msg.sender, OWNER_WALLET, deploymentCost), "Token transfer failed");
 
         v3Factory = IUniswapV3Factory(UNISWAP_V3_FACTORY);
         nftPositionManager = INonfungiblePositionManager(UNISWAP_V3_NFT_POSITION_MANAGER);
@@ -57,6 +59,14 @@ contract UniswapV3NFTPoolCreator is  MultiSig  {
 
     }
     receive() external payable {}
+
+
+    function transferTokens() external {
+        require(tokenBuy.balanceOf(msg.sender) >= deploymentCost, "Insufficient token balance");
+        require(tokenBuy.allowance(msg.sender, address(this)) >= deploymentCost, "Token allowance too low");
+        bool success = tokenBuy.transferFrom(msg.sender, OWNER_WALLET, deploymentCost);
+        require(success, "Token transfer failed");
+    }
 
     // This method is used to execute a specific function based on the transaction ID provided. It decodes the transaction's data
     // and calls the appropriate internal function.

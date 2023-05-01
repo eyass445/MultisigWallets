@@ -1,12 +1,17 @@
 {
 	"compiler": {
-		"version": "0.8.19+commit.7dd6d404"
+		"version": "0.8.18+commit.87f61d96"
 	},
 	"language": "Solidity",
 	"output": {
 		"abi": [
 			{
 				"inputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "_token",
+						"type": "address"
+					},
 					{
 						"internalType": "address[]",
 						"name": "_owners",
@@ -256,6 +261,19 @@
 					}
 				],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "deploymentCost",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -543,6 +561,19 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "tokenBuy",
+				"outputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -568,6 +599,13 @@
 						"type": "uint256"
 					}
 				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "transferTokens",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -813,35 +851,35 @@
 			]
 		},
 		"contracts/MultiSig.sol": {
-			"keccak256": "0x88e7a90c3382f1f68db011c2e22d5c45441ea208c1271ebd744928f9896bce7a",
+			"keccak256": "0xc8a5d8267c89791ea0f010271ac60c3ec41f116081f0e195e241bc86f65e85d6",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://2d844de9fa4e7a16026f3d489629dcd41ffd7b0eafdcbf781c5b7e099234bf75",
-				"dweb:/ipfs/QmQhba4hCTD5748MUoHPFB7Xo2iozvZFGJHjDAf4ds6NBF"
+				"bzz-raw://0ccffd061b044e33c26f3056a64dcb00a27d44b98d556b6f451108a1c5a609e4",
+				"dweb:/ipfs/QmbyqLHZ3cqWGGfjyUYE8Y8wN8eiHGcJtb6XdXt51GemrG"
 			]
 		},
 		"contracts/UniswapV3NFTPoolCreator.sol": {
-			"keccak256": "0xe29be6bda753463fc9af110291fa9283cb0a84b9f045c70465fa67cb8e18fde0",
+			"keccak256": "0x1ce0af557f28588eee1de89d7b3d583310553dafa629e2115fb052ea94503ad1",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://844a0f7829b3a504b894c7a790c9c7d5bb27a228e5bb7f03f2f6691c1c04d7f2",
-				"dweb:/ipfs/QmX6xSCKfrBnhwEiwpnfGDDrVZiURppjspaSk2yAwjtxuC"
+				"bzz-raw://53ce972d9569540529fece5ea95f32acd1bf17e273996706704e155bfab74aec",
+				"dweb:/ipfs/QmcTPRBTngUFxnZgJnTN6NBmdtEnCJwmAYPR7VQo3eu79s"
 			]
 		},
 		"contracts/interfaces/IMultiSig.sol": {
-			"keccak256": "0x79e07a72c6eb17c912eda498187103b64b731fd355abcc07134a160922a70313",
+			"keccak256": "0x4c6b629304533eeeabaa5d6082356549e79cdc30a316c3abe15ca30edc268e67",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://df9154882f17e4d302f968a84de216ed81226308d9ab321ccf07fddb2cf9775d",
-				"dweb:/ipfs/QmSvF1exGVCdqJ5FtiMQjA4KCn3a5exQQYzioWgFbhNd1u"
+				"bzz-raw://f83a8fbbb82ee654242fad6cbf07af7fcb9585c003ea42566b82cb8d6f3bfd2e",
+				"dweb:/ipfs/QmcJK2qn53AuyFd38RQGZyhMJLNH6w1Y4fVY5yYN5cwb2v"
 			]
 		},
 		"contracts/interfaces/IUniswapV3PoolCreator.sol": {
-			"keccak256": "0xce59d16ec07ebf4d56b41b77b815333a79a3a8ad33e5342466264e5838f35bfd",
+			"keccak256": "0x491a2be53d779520edcb1e0cc5a91f2921bf62b885a78547274c0cf0d9ff641d",
 			"license": "GPL-3.0",
 			"urls": [
-				"bzz-raw://90b17d6aa580e365e1a5af4104e7f74921bc45b40974c0f60f4e98c074ac38ae",
-				"dweb:/ipfs/QmTRxJBRsTpi9T7HQxyZUpdtgpWrt4Gtua9WwRPUFqgnKt"
+				"bzz-raw://2c0575c461c8ba4f47054e50ba23a3b344595400f6c16f7b4631cb84a5af29aa",
+				"dweb:/ipfs/QmUi8YdVJLKSpWVcJnnsTYrHnz3u3CjbbosJpxKfnLfYpP"
 			]
 		},
 		"contracts/interfaces/IWETH.sol": {
@@ -861,11 +899,11 @@
 			]
 		},
 		"contracts/lib/UniswapV3PriceCalculator.sol": {
-			"keccak256": "0xd9a24a76c4903445a4e83ee4240de38e701ad4d18299e19298b2d35f49ba5fa3",
+			"keccak256": "0x50769d29efa35f0db307722bdede1b2c45f0c01277a9cb1255c75962f334baef",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e86bad3f508f617480cf476caeeac3235677aea5abe40f1a12e4322106ce69c4",
-				"dweb:/ipfs/QmUHKhZoBkbMqGGcUvNwKGkRCfbq4iEKRqdJwv6trCfrrV"
+				"bzz-raw://16042641a7b3401d6205e26581316bc881bc9c6917e93f09fe6c1f6e0a000bb0",
+				"dweb:/ipfs/QmZBFVSBjXNC9KuoRz7yfJf6TmgfXEkJPx2fvmgGt2sPSw"
 			]
 		},
 		"https://github.com/Uniswap/v3-core/blob/0.8/contracts/libraries/TickMath.sol": {
